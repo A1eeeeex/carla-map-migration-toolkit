@@ -5,10 +5,12 @@ Date: 2026-08-26
 ## Scope
 
 The candidate publication allowlist is limited to `plugins/`, `tests/`, `evals/`,
-`docs/`, `.agents/plugins/`, `.github/workflows/`, the root README and policy
-files, and the root implementation/verification reports. The original handoff
-prompts, `private-input/`, mounted external environments, full logs, and
-historical evidence are not publication candidates.
+`docs/`, `development/shared/`, `.agents/plugins/`, `.github/workflows/`, the
+root README and policy files, and the root implementation/verification reports.
+Original handoff prompts, discovery records, drafts, private inputs, mounted
+external environments, full logs, and historical evidence are consolidated
+under the Git-ignored `development/local/` tree and are not publication
+candidates.
 
 `PUBLICATION_ALLOWLIST.json` enumerates every candidate file. Its integration
 test rejects unlisted files under the candidate roots, forbidden binary/asset

@@ -8,5 +8,7 @@
 - Added six versioned JSON contracts, anonymous examples, profile catalog,
   static trigger/behavior evaluation data, and L0–L2 tests.
 - Recorded all real Editor/runtime/cold-copy work as `NOT_RUN`.
+- Consolidated future development material under `development/`, with a tracked
+  publication-safe area and a Git-ignored local/private area.
 
 No release has been published.

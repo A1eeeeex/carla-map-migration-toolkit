@@ -97,6 +97,13 @@ Hosted CI is limited to L0–L2 structure, logic, and anonymous fixtures. Unreal
 Editor, CARLA runtime, Cook/import, PIE, and cold-copy require authorized
 self-hosted environments and separate evidence.
 
+## Development materials
+
+Versioned development notes belong in [`development/shared/`](development/shared/).
+Original handoff, discovery, draft, and private material is consolidated under
+the Git-ignored `development/local/` tree. See the
+[development directory guide](development/README.md) before adding material.
+
 ## Project status
 
 This tree is an implementation candidate, not `v0.1.0-rc`: no real end-to-end

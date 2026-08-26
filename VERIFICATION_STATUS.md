@@ -60,23 +60,22 @@ the final clean rerun above passed. No product failure was hidden or reclassifie
 - Model-based Skill trigger precision/recall/confusion evaluation: `NOT_RUN`.
   Static dataset shape and expected-route assertions run at L1 only.
 - Hosted GitHub Actions execution: `NOT_RUN`; the workflow exists locally only.
-- Clean-clone installation: `NOT_RUN` because this handoff directory is not a
-  Git repository and no publication target was authorized.
+- Clean-clone installation: `NOT_RUN`; repository initialization does not prove
+  installation in a separate environment.
 - Real Cook/import/rollback, Unreal repair, CARLA runtime validation, PIE, HIL,
   and performance replay: `NOT_RUN`.
 
 ## Evidence and residual risk
 
 - Discovery, behavior baseline, migration matrix, and compatibility evidence:
-  `analysis/`.
+  `development/local/analysis/` (local-only and intentionally ignored by Git).
 - Implementation details: `IMPLEMENTATION_REPORT.md`.
 - Release blockers and unimplemented adapters: `KNOWN_LIMITATIONS.md`.
 - Publication scope and exclusions: `PUBLICATION_REDACTION_REPORT.md` and
   `PUBLICATION_ALLOWLIST.json`.
 - The private historical performance source was available during discovery but
   unavailable at closeout, so its recorded discovery hash was not revalidated.
-- No Git status/diff evidence exists because the supplied directory is not a Git
-  repository. File-scoped rollback uses the recorded scaffold hashes and
-  implementation path list instead.
+- The supplied directory initially had no Git metadata. Local repository history
+  now preserves the verified candidate baseline and subsequent structure changes.
 
 The current tree is an inspect/plan/audit foundation, not a `v0.1.0-rc`.

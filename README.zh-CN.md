@@ -39,5 +39,12 @@ python3 -m pip install --requirement requirements-dev.txt
 python3 -m pytest -q
 ```
 
+## 开发资料
+
+可提交、已脱敏的开发资料统一放在
+[`development/shared/`](development/shared/)；原始交接包、发现记录、草稿和
+私有输入集中在 Git 忽略的 `development/local/`。新增资料前请阅读
+[`development/README.md`](development/README.md)。
+
 详细限制见 [KNOWN_LIMITATIONS.md](KNOWN_LIMITATIONS.md)，验证分层见
 [VERIFICATION_STATUS.md](VERIFICATION_STATUS.md)。

@@ -32,9 +32,10 @@ The migration matrix classifies the 17 legacy scripts as 10 WRAP, 5 SPLIT,
 1 REWRITE, 1 ARCHIVE, and 0 KEEP-AS-IS. No legacy source was copied because
 publication rights are unknown and map-specific hardcoding is extensive.
 
-Discovery evidence is under `analysis/`, including the source inventory, behavior
-baseline, script matrix, hardcode/secret scan, compatibility evidence, open
-questions, publication-rights register, dependency map, and phased plan.
+Local-only discovery evidence is under `development/local/analysis/`, including
+the source inventory, behavior baseline, script matrix, hardcode/secret scan,
+compatibility evidence, open questions, publication-rights register, dependency
+map, and phased plan. It is deliberately excluded from Git publication.
 
 ## Implemented shared core
 
@@ -76,14 +77,13 @@ authorized real environments and remain explicit gaps.
 
 ## Rollback
 
-This handoff directory is not a Git repository, so no commit-based rollback is
-available. `analysis/implementation-baseline.sha256` records the initial official
-scaffold hashes. All implementation paths are confined to this repository; no
-external Source CARLA, Package CARLA, UE4.27, map, or private evidence path was
-modified.
+The initial handoff directory was not a Git repository. The verified candidate
+was later recorded as the local Git baseline commit `b44c514`; the original
+scaffold hashes remain at the Git-ignored local path
+`development/local/analysis/implementation-baseline.sha256`.
 
-Rollback must therefore be file-list based: remove only paths introduced by this
-implementation and restore the scaffold files from the original handoff copy.
-Do not use `git clean`, `git reset --hard`, recursive workspace deletion, or raw
-Unreal asset operations. Runtime write adapters, when added, must use their own
-timestamped backup manifest and verified reverse operation.
+Repository changes can be reviewed or reverted from that baseline without
+touching `development/local/` or any external environment. Do not use `git
+clean`, `git reset --hard`, recursive workspace deletion, or raw Unreal asset
+operations. Runtime write adapters, when added, must use their own timestamped
+backup manifest and verified reverse operation.
