@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+import subprocess
 from pathlib import Path
 
 from conftest import REPO_ROOT
@@ -17,11 +18,25 @@ def _load_manifest() -> dict:
 
 
 def _candidate_files(manifest: dict) -> set[str]:
+    if (REPO_ROOT / ".git").is_dir():
+        output = subprocess.check_output(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=REPO_ROOT,
+        )
+        return {path.decode() for path in output.split(b"\0") if path}
+
+    ignored_parts = {"__pycache__", ".pytest_cache", ".ruff_cache"}
     files = {path for path in manifest["root_files"]}
     for relative_root in manifest["candidate_roots"]:
         root = REPO_ROOT / relative_root
         assert root.is_dir(), f"candidate root is missing: {relative_root}"
-        files.update(str(path.relative_to(REPO_ROOT)) for path in root.rglob("*") if path.is_file())
+        files.update(
+            str(path.relative_to(REPO_ROOT))
+            for path in root.rglob("*")
+            if path.is_file()
+            and not ignored_parts.intersection(path.relative_to(REPO_ROOT).parts)
+            and path.suffix.lower() not in {".pyc", ".pyo"}
+        )
     return files
 
 
