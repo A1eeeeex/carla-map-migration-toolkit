@@ -1,0 +1,1 @@
+{"fixture":"archive-path-traversal","members":["Package/Maps/AnonymousDemo","../escape"],"reason_code":"PKG-ARCHIVE-UNSAFE-TRAVERSAL"}

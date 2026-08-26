@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0.0",
+  "route": "source-carla-to-ue427",
+  "target_profile": "standalone-map",
+  "overall_status": "NOT_RUN",
+  "required_checks": [],
+  "optional_checks": [],
+  "not_run_checks": ["Editor reopen", "PIE", "cold-copy"],
+  "blockers": [],
+  "evidence_level": "L2_FIXTURE",
+  "environment": {"kind": "anonymous-text-fixture"},
+  "artifacts": [],
+  "remaining_risk": ["No Unreal Editor or runtime validation was performed."]
+}

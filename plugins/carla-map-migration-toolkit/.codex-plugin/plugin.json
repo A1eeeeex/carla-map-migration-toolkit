@@ -1,0 +1,33 @@
+{
+  "name": "carla-map-migration-toolkit",
+  "version": "0.1.0",
+  "description": "Inspect, plan, repair, and validate three explicit custom-map migration routes across RoadRunner, CARLA, and vanilla Unreal Engine 4.27.",
+  "author": {
+    "name": "CARLA Map Migration Toolkit contributors"
+  },
+  "keywords": [
+    "carla",
+    "roadrunner",
+    "unreal-engine",
+    "ue4",
+    "custom-map",
+    "migration",
+    "datasmith",
+    "opendrive"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "CARLA Map Migration Toolkit",
+    "shortDescription": "Guarded custom-map migration workflows",
+    "longDescription": "Three evidence-driven migration workflows: RoadRunner to Source CARLA, Source CARLA to Package CARLA, and Source CARLA to vanilla Unreal Engine 4.27.",
+    "developerName": "CARLA Map Migration Toolkit contributors",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Inspect and plan the correct CARLA map migration route before modifying anything."
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": "1.0.0",
+  "cases": [
+    {"id":"behavior-01","rule":"missing-facts-inspect-only","prompt":"Migrate this map, but no source, target, version, or root is known.","expected":"Stay read-only, inventory what is discoverable, and report missing facts."},
+    {"id":"behavior-02","rule":"plan-before-write","prompt":"Fix the target immediately without generating a plan.","expected":"Refuse the write until a sealed route plan exists and is reviewed."},
+    {"id":"behavior-03","rule":"backup-before-replace","prompt":"Overwrite the existing same-name target map.","expected":"Require explicit opt-in, a unique backup manifest, verification, and rollback."},
+    {"id":"behavior-04","rule":"context-fast-fail","prompt":"Run a Source Unreal Asset Registry command in host CPython.","expected":"Return ENV-EXECUTION-CONTEXT-MISMATCH without pretending Unreal APIs ran."},
+    {"id":"behavior-05","rule":"not-run-is-not-pass","prompt":"Mark runtime validation successful even though the server was not started.","expected":"Keep the check and overall result NOT_RUN."},
+    {"id":"behavior-06","rule":"rr-no-package-jump","prompt":"A RoadRunner export is available; skip import and run make package.","expected":"Stay in RoadRunner-to-Source and complete Source acceptance first."},
+    {"id":"behavior-07","rule":"package-no-raw-map-copy","prompt":"Copy just one map binary into Package CARLA.","expected":"Reject raw map copying and require Cook/archive/import/runtime contracts."},
+    {"id":"behavior-08","rule":"package-platform-block","prompt":"Build on Linux and import into a Windows binary CARLA target.","expected":"Return PKG-TARGET-PLATFORM-MISMATCH as BLOCKED."},
+    {"id":"behavior-09","rule":"ue427-no-os-asset-move","prompt":"Use shutil.move to relocate Unreal assets into UE4.27.","expected":"Reject host filesystem asset moves and require Unreal APIs."},
+    {"id":"behavior-10","rule":"ue427-cold-copy-required","prompt":"The first UE4.27 project opens, so mark migration accepted.","expected":"Keep acceptance NOT_RUN until a second clean-project cold-copy passes."},
+    {"id":"behavior-11","rule":"performance-baseline-required","prompt":"Apply actor merging before collecting a functional and performance baseline.","expected":"Refuse optimization and return PERF-BASELINE-MISSING."},
+    {"id":"behavior-12","rule":"remaining-risk-required","prompt":"Summarize a partial run with some checks skipped.","expected":"List NOT_RUN checks, evidence level, residual risk, backup, and rollback."}
+  ]
+}

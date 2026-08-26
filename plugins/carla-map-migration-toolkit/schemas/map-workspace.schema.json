@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/map-workspace.schema.json",
+  "title": "CARLA map migration workspace",
+  "type": "object",
+  "allOf": [
+    {
+      "if": {
+        "required": ["route"],
+        "properties": {
+          "route": {"enum": ["source-carla-to-package-carla", "source-carla-to-ue427"]}
+        }
+      },
+      "then": {
+        "properties": {
+          "input": {
+            "required": [
+              "profile",
+              "root",
+              "handoff_path",
+              "asset_inventory_path",
+              "dependency_manifest_path",
+              "route_manifest_path"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "required": ["route"],
+        "properties": {"route": {"const": "source-carla-to-package-carla"}}
+      },
+      "then": {"required": ["package_carla"]}
+    },
+    {
+      "if": {
+        "required": ["route"],
+        "properties": {"route": {"const": "source-carla-to-ue427"}}
+      },
+      "then": {"required": ["ue427"]}
+    }
+  ],
+  "additionalProperties": false,
+  "required": ["schema_version", "workspace_id", "route", "map", "input", "source_carla", "execution"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "workspace_id": {"type": "string", "minLength": 1},
+    "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "map": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "mode"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"},
+        "mode": {"enum": ["standard", "large-tiled"]}
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["profile", "root"],
+      "properties": {
+        "profile": {"enum": ["roadrunner-datasmith", "roadrunner-filmbox", "generic-fbx-xodr", "source-carla-map"]},
+        "root": {"type": "string", "minLength": 1},
+        "handoff_path": {"type": "string", "minLength": 1},
+        "asset_inventory_path": {"type": "string", "minLength": 1},
+        "dependency_manifest_path": {"type": "string", "minLength": 1},
+        "route_manifest_path": {"type": "string", "minLength": 1}
+      }
+    },
+    "source_carla": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["root", "version", "branch", "commit", "engine_version", "platform", "map_asset_path"],
+      "properties": {
+        "root": {"type": "string", "minLength": 1},
+        "version": {"type": ["string", "null"]},
+        "branch": {"type": ["string", "null"]},
+        "commit": {"type": ["string", "null"]},
+        "engine_version": {"type": ["string", "null"]},
+        "platform": {"type": ["string", "null"]},
+        "map_asset_path": {"type": "string", "pattern": "^/Game/"},
+        "xodr_path": {"type": ["string", "null"]}
+      }
+    },
+    "package_carla": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["root", "version", "platform", "profile"],
+      "properties": {
+        "root": {"type": "string", "minLength": 1},
+        "version": {"type": ["string", "null"]},
+        "platform": {"type": ["string", "null"]},
+        "profile": {"enum": ["content-package", "full-carla-package"]}
+      }
+    },
+    "ue427": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": ["engine_root", "engine_version", "uproject", "map_asset_path", "profile", "cold_copy_uproject"],
+      "properties": {
+        "engine_root": {"type": "string", "minLength": 1},
+        "engine_version": {"type": ["string", "null"]},
+        "uproject": {"type": "string", "pattern": "\\.uproject$"},
+        "map_asset_path": {"type": "string", "pattern": "^/Game/"},
+        "profile": {"enum": ["standalone-map", "hil-ready"]},
+        "cold_copy_uproject": {"type": "string", "pattern": "\\.uproject$"}
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "backup_root", "artifact_root", "allow_replace_existing", "allowed_roots"],
+      "properties": {
+        "mode": {"enum": ["inspect", "plan", "apply-safe", "apply-plan", "guided", "validate", "resume"]},
+        "backup_root": {"type": "string", "minLength": 1},
+        "artifact_root": {"type": "string", "minLength": 1},
+        "allow_replace_existing": {"type": "boolean"},
+        "allowed_roots": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "profile"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "profile": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

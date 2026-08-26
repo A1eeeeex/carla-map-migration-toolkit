@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "handoff_id": "handoff-anonymous-demo-source",
+  "map_id": "anonymous-demo",
+  "completed_route": "roadrunner-to-source-carla",
+  "source_profile": {"name": "roadrunner-datasmith"},
+  "target_profile": {"name": "source-carla-map"},
+  "versions": {"carla": "0.9.16", "engine": "4.26.2-carla-fork"},
+  "platforms": {"source": "linux-x86_64"},
+  "paths": {"map_asset_path": "/Game/Carla/Maps/AnonymousDemo/AnonymousDemo"},
+  "input_hashes": {},
+  "asset_inventory": {"status": "NOT_RUN"},
+  "dependencies": {"status": "NOT_RUN"},
+  "repairs_applied": [],
+  "optimization": {"status": "NOT_RUN"},
+  "validation": {"status": "NOT_RUN"},
+  "known_issues": ["This is a schema fixture, not a real migration result."],
+  "next_routes": ["source-carla-to-package-carla", "source-carla-to-ue427"],
+  "artifacts": [],
+  "rollback": {}
+}

@@ -1,0 +1,1 @@
+"""Target validation report construction."""

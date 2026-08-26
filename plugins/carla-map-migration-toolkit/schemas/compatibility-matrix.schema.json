@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/compatibility-matrix.schema.json",
+  "title": "Evidence-backed compatibility matrix",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_at", "entries"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["route", "source_version", "target_version", "engine", "platform", "roadrunner", "map_mode", "toolkit_version", "status", "evidence_bundle", "verified_date", "verifier", "limitations"],
+        "properties": {
+          "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+          "source_version": {"type": ["string", "null"]},
+          "target_version": {"type": ["string", "null"]},
+          "engine": {"type": ["string", "null"]},
+          "platform": {"type": ["string", "null"]},
+          "roadrunner": {"type": ["string", "null"]},
+          "map_mode": {"enum": ["standard", "large-tiled", null]},
+          "toolkit_version": {"type": "string"},
+          "status": {"enum": ["verified", "community-verified", "experimental", "unsupported", "unknown"]},
+          "evidence_bundle": {"type": ["string", "null"]},
+          "verified_date": {"type": ["string", "null"], "format": "date"},
+          "verifier": {"type": ["string", "null"]},
+          "limitations": {"type": "array", "items": {"type": "string"}}
+        },
+        "allOf": [
+          {
+            "if": {"properties": {"status": {"const": "verified"}}, "required": ["status"]},
+            "then": {"properties": {"evidence_bundle": {"type": "string", "minLength": 1}, "verified_date": {"type": "string", "format": "date"}, "verifier": {"type": "string", "minLength": 1}}}
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/route-plan.schema.json",
+  "title": "Immutable CARLA map migration route plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "plan_id", "route", "created_at", "workspace_sha256", "input_fingerprints", "environment_fingerprints", "steps", "blocked_reasons", "plan_sha256"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "plan_id": {"type": "string", "minLength": 1},
+    "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "workspace_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "input_fingerprints": {"type": "array", "items": {"type": "object"}},
+    "environment_fingerprints": {"type": "array", "items": {"type": "object"}},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["step_id", "type", "execution_context", "read_paths", "write_paths", "assets", "expected_changes", "risk", "backup", "verify", "rollback"],
+        "properties": {
+          "step_id": {"type": "string", "minLength": 1},
+          "type": {"enum": ["AUTO", "EDITOR_CHECKPOINT", "REVIEW_REQUIRED", "BLOCKED"]},
+          "execution_context": {"enum": ["host-cpython", "source-unreal-python", "ue427-unreal-python", "carla-client-python", "shell-build"]},
+          "read_paths": {"type": "array", "items": {"type": "string"}},
+          "write_paths": {"type": "array", "items": {"type": "string"}},
+          "assets": {"type": "array", "items": {"type": "string"}},
+          "expected_changes": {"type": "array", "items": {"type": "string"}},
+          "risk": {"enum": ["low", "medium", "high"]},
+          "backup": {"type": "object"},
+          "verify": {"type": "array", "items": {"type": "string"}},
+          "rollback": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "blocked_reasons": {"type": "array", "items": {"type": "string"}},
+    "plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,1 @@
+{"fixture":"performance-comparable","conditions_equal":true,"protected_hashes_equal":true,"median_frame_ms":{"baseline":20.0,"candidate":15.0}}

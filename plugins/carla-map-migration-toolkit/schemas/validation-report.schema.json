@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/validation-report.schema.json",
+  "title": "Independent target validation report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "route", "target_profile", "overall_status", "required_checks", "optional_checks", "not_run_checks", "blockers", "evidence_level", "environment", "artifacts", "remaining_risk"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "target_profile": {"type": "string", "minLength": 1},
+    "overall_status": {"enum": ["PASS", "WARN", "FAIL", "NOT_RUN", "NOT_APPLICABLE", "BLOCKED"]},
+    "required_checks": {"type": "array"},
+    "optional_checks": {"type": "array"},
+    "not_run_checks": {"type": "array"},
+    "blockers": {"type": "array"},
+    "evidence_level": {"enum": ["L0_STRUCTURE", "L1_LOGIC", "L2_FIXTURE", "L3_EDITOR", "L4_RUNTIME", "L5_PORTABILITY"]},
+    "environment": {"type": "object"},
+    "artifacts": {"type": "array"},
+    "remaining_risk": {"type": "array"}
+  }
+}

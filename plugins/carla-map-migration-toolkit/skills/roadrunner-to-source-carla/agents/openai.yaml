@@ -1,0 +1,6 @@
+interface:
+  display_name: "RoadRunner to Source CARLA"
+  short_description: "Import RoadRunner maps into Source CARLA"
+  default_prompt: "Use $roadrunner-to-source-carla to inspect and plan a RoadRunner map import into Source CARLA."
+policy:
+  allow_implicit_invocation: true

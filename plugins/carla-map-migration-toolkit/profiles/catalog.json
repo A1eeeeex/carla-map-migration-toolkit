@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "profiles": [
+    {"id":"roadrunner-datasmith","route":"roadrunner-to-source-carla","role":"source","maturity":"experimental","required_members":["*.udatasmith","*.xodr"],"limitations":["RoadRunner and integration-plugin versions must be discovered; Dataprep uses Editor checkpoints."]},
+    {"id":"roadrunner-filmbox","route":"roadrunner-to-source-carla","role":"source","maturity":"experimental","required_members":["*.fbx","*.rrdata.xml","*.xodr"],"limitations":["Legacy importer availability and traffic metadata retention are version-dependent."]},
+    {"id":"generic-fbx-xodr","route":"roadrunner-to-source-carla","role":"source","maturity":"experimental","required_members":["*.fbx","*.xodr"],"limitations":["No RoadRunner metadata equivalence is promised."]},
+    {"id":"source-carla-map","route":"*","role":"handoff","maturity":"experimental","required_members":["map-handoff.json"],"limitations":["Downstream routes must revalidate environment and assets."]},
+    {"id":"content-package","route":"source-carla-to-package-carla","role":"target","maturity":"experimental","required_members":[],"limitations":["Build and target platform must match; real build/import/runtime evidence is required."]},
+    {"id":"full-carla-package","route":"source-carla-to-package-carla","role":"target","maturity":"experimental","required_members":[],"limitations":["No CARLA or Unreal binaries are distributed by this project."]},
+    {"id":"standalone-map","route":"source-carla-to-ue427","role":"target","maturity":"experimental","required_members":[],"limitations":["Cold-copy in a second clean UE4.27 project is mandatory."]},
+    {"id":"hil-ready","route":"source-carla-to-ue427","role":"target","maturity":"experimental","required_members":[],"limitations":["HIL behavior is evaluated separately and is not implied by standalone success."]}
+  ]
+}

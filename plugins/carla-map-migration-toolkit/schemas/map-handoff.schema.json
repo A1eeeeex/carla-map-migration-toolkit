@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/map-handoff.schema.json",
+  "title": "CARLA map migration handoff",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "handoff_id", "map_id", "completed_route", "source_profile", "target_profile", "versions", "platforms", "paths", "input_hashes", "asset_inventory", "dependencies", "repairs_applied", "optimization", "validation", "known_issues", "next_routes", "artifacts", "rollback"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "handoff_id": {"type": "string", "minLength": 1},
+    "map_id": {"type": "string", "minLength": 1},
+    "completed_route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "source_profile": {"type": "object"},
+    "target_profile": {"type": "object"},
+    "versions": {"type": "object"},
+    "platforms": {"type": "object"},
+    "paths": {"type": "object"},
+    "input_hashes": {"type": "object"},
+    "asset_inventory": {"type": "object"},
+    "dependencies": {"type": "object"},
+    "repairs_applied": {"type": "array"},
+    "optimization": {
+      "type": "object",
+      "required": ["status"],
+      "properties": {"status": {"enum": ["PASS", "WARN", "FAIL", "NOT_RUN", "NOT_APPLICABLE", "BLOCKED"]}}
+    },
+    "validation": {"type": "object"},
+    "known_issues": {"type": "array"},
+    "next_routes": {"type": "array", "items": {"enum": ["source-carla-to-package-carla", "source-carla-to-ue427"]}},
+    "artifacts": {"type": "array"},
+    "rollback": {"type": "object"}
+  }
+}

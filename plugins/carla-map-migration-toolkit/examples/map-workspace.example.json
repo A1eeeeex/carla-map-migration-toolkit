@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0.0",
+  "workspace_id": "anonymous-demo-workspace",
+  "route": "roadrunner-to-source-carla",
+  "map": {"id": "anonymous-demo", "name": "AnonymousDemo", "mode": "standard"},
+  "input": {"profile": "roadrunner-datasmith", "root": "/workspace/example/export"},
+  "source_carla": {
+    "root": "/workspace/example/source-carla",
+    "version": "0.9.16",
+    "branch": "example-branch",
+    "commit": "0000000000000000000000000000000000000000",
+    "engine_version": "4.26.2-carla-fork",
+    "platform": "linux-x86_64",
+    "map_asset_path": "/Game/Carla/Maps/AnonymousDemo/AnonymousDemo",
+    "xodr_path": "/workspace/example/export/AnonymousDemo.xodr"
+  },
+  "package_carla": {
+    "root": "/workspace/example/package-carla",
+    "version": "0.9.16",
+    "platform": "linux-x86_64",
+    "profile": "content-package"
+  },
+  "ue427": {
+    "engine_root": "/workspace/example/ue427",
+    "engine_version": "4.27.2",
+    "uproject": "/workspace/example/target/AnonymousDemo.uproject",
+    "map_asset_path": "/Game/MAPS/AnonymousDemo/AnonymousDemo",
+    "profile": "standalone-map",
+    "cold_copy_uproject": "/workspace/example/cold/AnonymousDemoCold.uproject"
+  },
+  "execution": {
+    "mode": "plan",
+    "backup_root": "/workspace/example/backups",
+    "artifact_root": "/workspace/example/artifacts",
+    "allow_replace_existing": false,
+    "allowed_roots": ["/workspace/example"]
+  },
+  "performance": {"enabled": false, "profile": null}
+}

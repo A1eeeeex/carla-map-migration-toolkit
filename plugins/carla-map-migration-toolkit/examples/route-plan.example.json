@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0.0",
+  "plan_id": "plan-anonymous-demo-src2ue427",
+  "route": "source-carla-to-ue427",
+  "created_at": "2026-08-26T00:00:00Z",
+  "workspace_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "input_fingerprints": [],
+  "environment_fingerprints": [{"component": "source_carla", "version": "0.9.16", "engine": "4.26.2-carla-fork"}],
+  "steps": [
+    {
+      "step_id": "SRC2UE427.MIGRATE_ASSETS",
+      "type": "REVIEW_REQUIRED",
+      "execution_context": "source-unreal-python",
+      "read_paths": ["/workspace/example/source-carla"],
+      "write_paths": ["/workspace/example/target/AnonymousDemo.uproject"],
+      "assets": [],
+      "expected_changes": ["Migrate only reviewed dependencies through Unreal APIs."],
+      "risk": "medium",
+      "backup": {"root": "/workspace/example/backups", "required": true},
+      "verify": ["Rescan target dependencies."],
+      "rollback": ["Restore only objects listed by the backup manifest."]
+    }
+  ],
+  "blocked_reasons": [],
+  "plan_sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+}

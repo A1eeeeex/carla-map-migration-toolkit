@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/stage-result.schema.json",
+  "title": "CARLA map migration stage result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "route", "stage", "status", "execution_type", "execution_context", "started_at", "finished_at", "inputs", "actions", "changes", "checks", "metrics", "artifacts", "warnings", "failures", "rollback", "next_allowed_stages"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "stage": {"type": "string", "pattern": "^(RR2SRC|SRC2PKG|SRC2UE427)\\."},
+    "status": {"enum": ["PASS", "WARN", "FAIL", "NOT_RUN", "NOT_APPLICABLE", "BLOCKED"]},
+    "execution_type": {"enum": ["AUTO", "EDITOR_CHECKPOINT", "REVIEW_REQUIRED", "BLOCKED", "MANUAL"]},
+    "execution_context": {"enum": ["host-cpython", "source-unreal-python", "ue427-unreal-python", "carla-client-python", "shell-build"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "finished_at": {"type": "string", "format": "date-time"},
+    "inputs": {"type": "array"},
+    "actions": {"type": "array"},
+    "changes": {"type": "array"},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "category", "severity", "status", "confidence", "message", "evidence", "remediation", "source"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "category": {"type": "string", "minLength": 1},
+          "severity": {"enum": ["info", "warning", "error", "critical"]},
+          "status": {"enum": ["PASS", "WARN", "FAIL", "NOT_RUN", "NOT_APPLICABLE", "BLOCKED"]},
+          "confidence": {"enum": ["deterministic", "sampled", "heuristic", "manual"]},
+          "message": {"type": "string"},
+          "evidence": {"type": "array"},
+          "remediation": {"type": "array"},
+          "source": {"type": "string"},
+          "reason_code": {"type": "string"}
+        }
+      }
+    },
+    "metrics": {"type": "array"},
+    "artifacts": {"type": "array"},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "failures": {"type": "array", "items": {"type": "string"}},
+    "rollback": {"type": "object"},
+    "next_allowed_stages": {"type": "array", "items": {"type": "string"}}
+  }
+}

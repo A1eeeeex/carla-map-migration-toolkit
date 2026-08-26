@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "run-anonymous-demo",
+  "route": "source-carla-to-package-carla",
+  "stage": "SRC2PKG.ARCHIVE_AUDIT",
+  "status": "PASS",
+  "execution_type": "AUTO",
+  "execution_context": "host-cpython",
+  "started_at": "2026-08-26T00:00:00Z",
+  "finished_at": "2026-08-26T00:00:01Z",
+  "inputs": [],
+  "actions": ["Inspected member metadata without extraction."],
+  "changes": [],
+  "checks": [
+    {
+      "id": "PKG-ARCHIVE-NO-PATH-TRAVERSAL",
+      "category": "archive-safety",
+      "severity": "error",
+      "status": "PASS",
+      "confidence": "deterministic",
+      "message": "No unsafe member path was found.",
+      "evidence": [],
+      "remediation": [],
+      "source": "archive_inspector"
+    }
+  ],
+  "metrics": [],
+  "artifacts": [],
+  "warnings": [],
+  "failures": [],
+  "rollback": {},
+  "next_allowed_stages": ["SRC2PKG.TARGET_BACKUP"]
+}

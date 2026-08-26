@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0.0",
+  "generated_at": "2026-08-26T00:00:00Z",
+  "entries": [
+    {
+      "route": "source-carla-to-ue427",
+      "source_version": "0.9.16",
+      "target_version": "4.27.2",
+      "engine": "4.26.2-carla-fork to 4.27.2",
+      "platform": "linux-x86_64",
+      "roadrunner": null,
+      "map_mode": "standard",
+      "toolkit_version": "0.1.0",
+      "status": "experimental",
+      "evidence_bundle": null,
+      "verified_date": null,
+      "verifier": null,
+      "limitations": ["Structure and fixture logic only; Editor and cold-copy remain NOT_RUN."]
+    }
+  ]
+}

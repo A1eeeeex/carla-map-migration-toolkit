@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0.0",
+  "conditions": {
+    "hardware_id": null,
+    "os": null,
+    "target_profile": null,
+    "resolution": null,
+    "quality": null,
+    "camera_profile_sha256": null,
+    "traffic_profile_sha256": null,
+    "sensor_profile_sha256": null,
+    "warmup_frames": null,
+    "sample_frames": null,
+    "repeats": null,
+    "vsync": null,
+    "fps_cap": null
+  },
+  "metrics": {
+    "median_frame_ms": null,
+    "p95_frame_ms": null
+  },
+  "protected": {
+    "lod0_sha256": null,
+    "material_slots_sha256": null,
+    "transforms_sha256": null,
+    "collision_sha256": null,
+    "xodr_sha256": null
+  }
+}

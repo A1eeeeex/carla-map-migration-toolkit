@@ -1,0 +1,6 @@
+interface:
+  display_name: "Source CARLA to Package CARLA"
+  short_description: "Package and verify a Source CARLA map"
+  default_prompt: "Use $source-carla-to-package-carla to inspect and plan a matching CARLA content package."
+policy:
+  allow_implicit_invocation: true
