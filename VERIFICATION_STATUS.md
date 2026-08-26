@@ -59,7 +59,8 @@ the final clean rerun above passed. No product failure was hidden or reclassifie
 
 - Model-based Skill trigger precision/recall/confusion evaluation: `NOT_RUN`.
   Static dataset shape and expected-route assertions run at L1 only.
-- Hosted GitHub Actions execution: `NOT_RUN`; the workflow exists locally only.
+- Hosted GitHub Actions L0–L2 execution: PASS for `main` commit `9743ab3`:
+  `https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/runs/32941292193`.
 - Clean-clone installation: `NOT_RUN`; repository initialization does not prove
   installation in a separate environment.
 - Real Cook/import/rollback, Unreal repair, CARLA runtime validation, PIE, HIL,

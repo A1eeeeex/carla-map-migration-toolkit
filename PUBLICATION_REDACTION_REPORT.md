@@ -50,5 +50,7 @@ exceptions and are named explicitly in that manifest.
    redacted summaries/manifests.
 5. Perform a clean-clone installation check in the intended Codex host.
 
-No GitHub repository, push, release, upload, or other publication action was
-performed in this task.
+A private GitHub repository was created and `main` was pushed only after explicit
+user authorization. The repository remains `PRIVATE`; `development/local/` was
+excluded by Git, and no public release, asset upload, or visibility change was
+performed.

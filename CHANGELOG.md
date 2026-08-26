@@ -10,5 +10,7 @@
 - Recorded all real Editor/runtime/cold-copy work as `NOT_RUN`.
 - Consolidated future development material under `development/`, with a tracked
   publication-safe area and a Git-ignored local/private area.
+- Initialized the reviewed source tree in a private GitHub repository; no public
+  release or visibility change was made.
 
 No release has been published.
