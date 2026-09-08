@@ -1,6 +1,6 @@
 # CARLA Map Migration Toolkit
 
-Three repeatable migration workflows for custom CARLA maps.
+Three Codex Skills for importing, packaging and delivering custom CARLA maps.
 
 ```text
 RoadRunner    ── Import & Repair ──► Source CARLA
@@ -8,99 +8,104 @@ Source CARLA ── Cook & Verify ─────► Package CARLA
 Source CARLA ── Detach & Repair ───► Vanilla UE4.27
 ```
 
-This repository is an experimental, skills-only Codex Plugin plus a deterministic
-host-side core. It inventories paths and versions, seals read-only plans, audits
-archives, compares performance evidence, and preserves `NOT_RUN` when Unreal or
-CARLA checks have not happened. It does not distribute maps, XODR, Unreal/CARLA
-binaries, or engine assets.
+[中文](README.zh-CN.md) · [Installation](docs/installation.md) · [Capabilities](docs/capabilities.md) · [Evidence & limitations](docs/current-status.md)
 
-The [capability checklist](docs/capabilities.md) distinguishes automated checks
-from guided Editor work. It includes Content-only delivery audits, SHA256
-manifests and per-counter performance comparisons without launching an engine.
+An experimental Codex Plugin combining map-processing guidance with scripts for
+inspection, planning, package audits and performance comparisons. It helps Codex
+follow repeatable workflows; it is not a one-click converter. Imports, repairs,
+builds and runtime checks still require your own tools and authorized Editor/API operations.
 
-> This is an independent community project. It is not affiliated with or
-> endorsed by CARLA, Epic Games, or MathWorks RoadRunner.
+## Choose your route
 
-## The three routes
+| Your task | Route guide |
+|---|---|
+| Import a RoadRunner export into editable Source CARLA | [Import and repair](docs/routes/roadrunner-to-source-carla.md) |
+| Build and validate a map for matching Package CARLA | [Cook and package](docs/routes/source-carla-to-package-carla.md) |
+| Remove CARLA dependencies and deliver to vanilla UE4.27 | [Migrate and cold-copy](docs/routes/source-carla-to-ue427.md) |
 
-| Route Skill | Outcome | Recovered historical validation | Current-contract evidence |
-|---|---|---|---|
-| `roadrunner-to-source-carla` | Editable Source CARLA map and handoff | Source Editor and bounded flat-road driving records recovered | Complete L4 Verified Run not yet recorded |
-| `source-carla-to-package-carla` | Audited content/full package and runtime handoff | Package/install/runtime hash chain recovered | Complete L5 Verified Run not yet recorded |
-| `source-carla-to-ue427` | CARLA-detached UE4.27 map with mandatory cold-copy | Second-project structural, PIE, sunny-view and Content-only delivery records recovered | Target-stage evidence exists; complete current-contract L5 Verified Run not recorded |
+Shared guidance covers materials, textures, references, collision, daylight,
+Content-only delivery and staged performance optimization. Host scripts audit
+archives, generate SHA256 manifests and report performance gains and regressions.
+The [capability checklist](docs/capabilities.md) separates automation from Editor work.
 
-All three routes have recorded real-use evidence, with different coverage and
-limitations. Later records also include a second clean UE4.27.2 project and a
-Content-only delivery; the older statement that no cold-copy work had happened
-was stale. These case records are not complete current-contract Verified Runs,
-and no version stack is marked verified. See the [current status](docs/current-status.md),
-[release checklist](docs/release-readiness.md),
-[historical binding](development/shared/release-research/historical-evidence-binding-summary.md),
-[repair/optimization recovery](development/shared/release-research/historical-repair-optimization-evidence-summary.md),
-and [compatibility evidence](docs/compatibility/README.md).
+## Install
 
-Public wording and route status are governed by the machine-readable
-[Claims Registry](plugins/carla-map-migration-toolkit/examples/claims-registry.example.json),
-the [support-status definitions](docs/support-status.md), and the
-[claim-to-evidence matrix](docs/claim-test-traceability.md). `implemented` never
-means that a real Editor/runtime migration has passed.
-
-## Plugin-first installation
-
-From a clean clone on the supported host, create the local Python runtime and
-install this repository as one Codex marketplace and one complete Plugin. This
-setup block uses the `shell-build` execution context; bundled deterministic
-commands run in `host-cpython`.
+Tested baseline: Ubuntu 22.04 x86_64, Python 3.10.12 and Codex CLI 0.153.4.
+See [installation](docs/installation.md) for version checks and setup details.
+Install the complete Plugin, not a single Skill folder: the three Skills share
+scripts, schemas and references. Setup uses the `shell-build` context.
 
 ```bash
+git clone https://github.com/A1eeeeex/carla-map-migration-toolkit.git
+cd carla-map-migration-toolkit
 python3.10 -m venv .venv
 .venv/bin/python -m pip install --requirement requirements-runtime.txt
 codex plugin marketplace add . --json
 codex plugin add carla-map-migration-toolkit@carla-map-migration-toolkit --json
+source .venv/bin/activate
+codex
 ```
 
-v0.1 does not support installing a single Skill subdirectory because all three
-Skills share scripts, schemas, references, profiles, templates, and status
-rules. See the exact host versions, verification command, limitations and
-five-minute walkthrough in the [installation contract](docs/installation.md).
+## Use with Codex
 
-Current canonical Plugin/Skill structure follows the official OpenAI
-[Plugins](https://developers.openai.com/plugins/concepts/plugins),
-[Skills](https://developers.openai.com/plugins/concepts/skills), and
-[build guidance](https://developers.openai.com/plugins/build/skills).
+Choose one request, provide your input location, and start with inspection:
 
-## Quick start
+```text
+Use $carla-map-migration-toolkit:roadrunner-to-source-carla. Inspect my RoadRunner export and plan its import into Source CARLA. Do not modify anything yet.
+```
 
-Run the [rights-safe host demo](demo/quickstart/README.md) without any CARLA,
-Unreal or customer assets:
+```text
+Use $carla-map-migration-toolkit:source-carla-to-package-carla. Inspect my Source CARLA handoff and plan a matching content package. Do not build or install yet.
+```
+
+```text
+Use $carla-map-migration-toolkit:source-carla-to-ue427. Inspect my Source CARLA map and plan delivery to clean UE4.27, including a second clean-project cold-copy. Do not modify anything yet.
+```
+
+No engine or map available? In a separate terminal at the clone root, try the
+[synthetic host demo](demo/quickstart/README.md):
 
 ```bash
 demo_root="$(mktemp -d -t cmtk-quickstart.XXXXXX)"
 .venv/bin/python demo/quickstart/run_demo.py --workspace-root "$demo_root"
 ```
 
-It should inspect and verify a sealed plan, then report runtime validation as
-`NOT_RUN`. That safe stop is intentional: the synthetic text fixture proves L1
-host behavior only, not a real map import.
+Expected: `demo_status: PASS`, `route_validation_status: NOT_RUN`.
+The demo checks planning logic, not a real map import.
 
-Invoke one route naturally and ask for inspection first:
+## What has been verified?
 
-```text
-Use $carla-map-migration-toolkit:roadrunner-to-source-carla. Inspect this RoadRunner Datasmith export and
-plan its import into my Source CARLA build. Do not modify anything yet.
+[435 automated tests passed for commit 6222f0c](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/runs/34193021128).
+These cover structure, host logic and synthetic fixtures; engine jobs were skipped.
+All three routes also have historical real-use records, including second-project
+UE4.27 checks and Content-only delivery. Coverage is case-specific, not a guarantee
+for every map or version. Complete end-to-end evidence under the toolkit's current
+verification format is still missing; this remains experimental, not a certified RC.
+
+See [evidence and compatibility](docs/current-status.md) for records and gaps.
+Inspection and planning are the default. Asset changes require explicit approval,
+engine-aware backups and validation; high-risk optimizations require review.
+This repository includes no customer maps, XODR or engine binaries.
+
+## Further reading
+
+- [Known limitations](KNOWN_LIMITATIONS.md) — unsupported behavior and implementation gaps
+- [Contributing](CONTRIBUTING.md) — development setup and change guidelines
+- [Development reference index](development/shared/README.md) — design, evidence rules and historical reports
+- [Changelog](CHANGELOG.md) — development and release history
+
+<details>
+<summary>Developer commands and direct CLI example</summary>
+
+Run tests from the clone root:
+
+```bash
+.venv/bin/python -m pip install --requirement requirements-dev.txt
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 \
+  .venv/bin/python -m pytest -q -p no:cacheprovider
 ```
 
-```text
-Use $carla-map-migration-toolkit:source-carla-to-package-carla. Inspect the Source handoff and plan a
-matching Linux content package, including archive and runtime validation.
-```
-
-```text
-Use $carla-map-migration-toolkit:source-carla-to-ue427. Plan a migration into clean vanilla UE4.27, remove
-CARLA-specific dependencies, and require a second clean-project cold-copy.
-```
-
-The deterministic host commands are also usable directly:
+Direct inspection runs in `host-cpython`:
 
 ```bash
 CMTK_EXECUTION_CONTEXT=host-cpython .venv/bin/python \
@@ -109,72 +114,17 @@ CMTK_EXECUTION_CONTEXT=host-cpython .venv/bin/python \
   --config plugins/carla-map-migration-toolkit/examples/map-workspace.example.json
 ```
 
-The checked-in example contains illustrative absolute paths and will normally
-return `BLOCKED` until copied and adapted to existing allowed roots. This is the
-safe outcome.
+The example uses illustrative paths. Copy and adapt it to your allowed roots;
+otherwise `BLOCKED` is expected. See [installation](docs/installation.md).
 
-## Safety model
+</details>
 
-- `inspect` and `plan` are the default; plans bind the entire workspace hash.
-- Every path is canonicalized and checked against explicit allowed roots.
-- External archives are inspected without extraction.
-- Raw host operations on `.uasset`, `.umap`, `.uexp`, and `.ubulk` are forbidden.
-- Unreal changes require engine APIs, referencer evidence, a backup, verification,
-  and rollback metadata.
-- Optimization requires comparable conditions and protected-property hashes.
-- Stage/check statuses are exactly `PASS`, `WARN`, `FAIL`, `NOT_RUN`,
-  `NOT_APPLICABLE`, and `BLOCKED`. Verified Run roll-ups use `PASS`,
-  `PASS_WITH_WARNINGS`, `FAIL`, `INCOMPLETE`, and `BLOCKED`; a required
-  `NOT_RUN`/`NOT_APPLICABLE` becomes `INCOMPLETE`, never success.
-- L0–L5 are the complete proof-level scale. `community-verified` is a support
-  maturity status, not a numeric evidence level, and still requires the route's
-  full L4/L5 gate.
-- A Verified Run check must bind to its route catalog stage and hashed underlying
-  structured evidence; input/artifact parsing uses one byte snapshot, evidence
-  paths stay repository-relative, and redaction scans the full public envelope
-  without publishing the private term set.
+---
 
-See the shared [safety guardrails](plugins/carla-map-migration-toolkit/references/safety-guardrails.md)
-and [evidence levels](plugins/carla-map-migration-toolkit/references/evidence-levels.md).
-The external receipt flow is documented in
-[execution-context evidence adapters](docs/evidence-adapters.md).
+## License and contact
 
-## Development verification
-
-```bash
-.venv/bin/python -m pip install --requirement requirements-dev.txt
-PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 \
-  .venv/bin/python -m pytest -q -p no:cacheprovider
-```
-
-Hosted CI is limited to L0–L2 structure, logic, and anonymous fixtures. Unreal
-Editor, CARLA runtime, Cook/import, PIE, and cold-copy require authorized
-self-hosted environments and separate evidence.
-
-## Development materials
-
-Versioned development notes belong in [`development/shared/`](development/shared/).
-Original handoff, discovery, draft, and private material is consolidated under
-the Git-ignored `development/local/` tree. See the
-[development directory guide](development/README.md) before adding material.
-
-## License
-
-Original project material is licensed under the
-[Apache License 2.0](LICENSE). Copyright and attribution details are recorded in
-[NOTICE](NOTICE.md) and [CITATION.cff](CITATION.cff). The license does not grant
-rights to CARLA, Unreal Engine, RoadRunner, customer material, private inputs,
-excluded binaries, or third-party assets.
-
-Public maintainer: [@A1eeeeex](https://github.com/A1eeeeex). Security reports
-must use the private process in [SECURITY.md](SECURITY.md), not a public issue.
-
-## Project status
-
-This is an experimental implementation candidate, not a fully verified
-`v0.1.0-rc`. Release preparation reuses recorded real work and tests only the
-changed surfaces; it does not replay migrations merely to regenerate paperwork.
-Performance results include regressions and declared workload limits, not
-universal speedup claims. See the [release checklist](docs/release-readiness.md),
-[known limitations](KNOWN_LIMITATIONS.md) and
-[verification status](VERIFICATION_STATUS.md).
+[Apache-2.0](LICENSE) · [Notice](NOTICE.md) · [Citation](CITATION.cff) · Maintainer [@A1eeeeex](https://github.com/A1eeeeex).
+The license covers original project material, not third-party maps or engines.
+This is an independent community project, not affiliated with or endorsed by
+CARLA, Epic Games or MathWorks RoadRunner. Follow [SECURITY.md](SECURITY.md)
+for security reports; do not disclose sensitive details in public issues.

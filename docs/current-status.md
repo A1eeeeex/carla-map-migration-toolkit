@@ -1,7 +1,13 @@
 # Current status
 
-Updated: 2026-09-05. Three route Skills plus guarded host helpers; guided Unreal/CARLA
+Updated: 2026-09-08. Three route Skills plus guarded host helpers; guided Unreal/CARLA
 operations, not an automatic importer or universally certified compatibility stack.
+
+This is the starting point for evidence and compatibility questions. For usage,
+start with [installation](installation.md) or the [capability list](capabilities.md).
+Implementation gaps are collected in [known limitations](../KNOWN_LIMITATIONS.md);
+historical reports and formal evidence rules are indexed under
+[development references](../development/shared/README.md).
 
 ## Implemented capabilities
 
@@ -32,6 +38,14 @@ Earlier details remain in [verification history](../VERIFICATION_STATUS.md)
 and the [historical binding summary](../development/shared/release-research/historical-evidence-binding-summary.md).
 
 ## Latest lightweight checks
+
+The public source commit `6222f0c` passed
+[435 hosted tests](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/runs/34193021128)
+in 11.26 seconds. The Unreal/CARLA job was skipped, not passed. An exact local
+clone of that commit also passed runtime dependency installation, the anonymous
+host demo and isolated Plugin installation. These are installation and host checks,
+not new map migration evidence. The repository is now public; that does not by
+itself mean a GitHub Release has been published.
 
 The September 5 integration passed 435 host/fixture/structure tests, three
 Skill validators and changed-file lint. A read-only audit of an existing

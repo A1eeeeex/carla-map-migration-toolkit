@@ -16,9 +16,9 @@ satisfy missing current-contract stages.
 - The Primary RoadRunner stack is now locked to RoadRunner R2025a, its built-in
   Datasmith export identity and integration bundle 1.4.4, but no rights-safe
   current L4 replay has run.
-- Apache-2.0, the copyright holder and accountable maintainer are selected, but
-  the final public repository URL and GitHub private vulnerability-reporting
-  channel are not active while the repository remains private.
+- The repository is public and uses Apache-2.0. Repository visibility does not
+  establish Release publication or activation of GitHub private vulnerability
+  reporting; follow SECURITY.md and verify the private channel before disclosure.
 - No redistribution rights are established for the legacy Skill/scripts,
   historical evidence, or any private demo/map asset. They were not copied.
 

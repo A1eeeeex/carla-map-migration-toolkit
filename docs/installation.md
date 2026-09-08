@@ -44,8 +44,9 @@ For a maintainer-provided text-only source archive, verify its `SHA256SUMS`,
 unpack it into a dedicated empty directory and use the included repository-root
 folder for the same commands. The local marketplace installation does not
 require Git history; do not use the private build directory or an installed
-Plugin cache as the distribution. This path was checked on an allowlisted source
-snapshot, not a newly committed release revision.
+Plugin cache as the distribution. The source-archive rehearsal used an allowlisted
+snapshot; a later exact local clone of commit `6222f0c` also passed runtime setup,
+the host demo and isolated Plugin installation.
 
 Run these commands from a fresh clone. Do not use `sudo`, a global Python
 environment, or a single Skill subdirectory. Environment setup and Plugin
@@ -105,9 +106,9 @@ selection on CLI 0.148.0. The September 5 follow-up installed CLI 0.153.4 only
 in a task-private directory and passed an 11-case description-routing batch.
 That batch is not an installed-invocation precision/recall benchmark.
 
-The current snapshot installation and targeted check results are listed in the
-[release checklist](release-readiness.md). The candidate is a hash-frozen
-source snapshot, not a newly committed Git revision. After an authorized commit,
-confirm its source matches the tested manifest; repeat affected checks only if
-files or the declared environment changed. No engine launch is needed to
-validate Plugin installation or the anonymous demo.
+The exact-clone installation and hosted test results for commit `6222f0c` are
+summarized in [current status](current-status.md). Earlier preparation records
+remain in the [release checklist](release-readiness.md). Repeat affected checks
+when files or the declared environment change; no engine launch is needed to
+validate Plugin installation or the anonymous demo. These checks do not establish
+full installed-use routing accuracy or end-to-end engine compatibility.
