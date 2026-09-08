@@ -7,8 +7,12 @@ from conftest import REPO_ROOT
 
 
 def test_golden_map_plan_is_text_only_and_covers_required_faults():
-    root = REPO_ROOT / "demo" / "golden-map"
+    root = REPO_ROOT / "development" / "shared" / "plans" / "golden-map"
     manifest = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["status"] == "planned"
+    assert manifest["verified_environments"] == []
+    assert not (REPO_ROOT / "demo" / "golden-map").exists()
+    assert all((REPO_ROOT / path).is_file() for path in manifest["public_files"])
     assert manifest["public_tier"] == "public-golden-map-lite"
     assert manifest["rights"]["status"] == "REVIEW_REQUIRED"
     assert {variant["id"] for variant in manifest["failure_variants"]} == {

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title desc">
+  <title id="title">CARLA Map Migration Toolkit</title>
+  <desc id="desc">Independent Codex Plugin and validation toolkit. RoadRunner to Source CARLA, Source CARLA to Package CARLA, Source CARLA to UE4.27. Technical route diagram, not map evidence.</desc>
+  <rect width="1280" height="640" fill="#101b2b"/>
+  <path d="M64 68H1216" stroke="#55c7c0" stroke-width="4"/>
+  <g font-family="DejaVu Sans, sans-serif" fill="#f4f7fa">
+    <text x="64" y="148" font-size="48" font-weight="bold">CARLA Map Migration Toolkit</text>
+    <text x="64" y="200" font-size="26" fill="#a7bfce">Codex Plugin + Validation Toolkit</text>
+    <rect x="64" y="253" width="1152" height="88" rx="10" fill="#1d3047"/>
+    <rect x="64" y="361" width="1152" height="88" rx="10" fill="#1d3047"/>
+    <rect x="64" y="469" width="1152" height="88" rx="10" fill="#1d3047"/>
+    <g font-size="30">
+      <text x="94" y="308">RoadRunner</text><text x="644" y="308">Source CARLA</text>
+      <text x="94" y="416">Source CARLA</text><text x="644" y="416">Package CARLA</text>
+      <text x="94" y="524">Source CARLA</text><text x="644" y="524">Vanilla UE4.27</text>
+    </g>
+    <text x="64" y="603" font-size="18" fill="#a7bfce">INDEPENDENT OPEN SOURCE · EXPERIMENTAL PREVIEW</text>
+  </g>
+  <g stroke="#55c7c0" stroke-width="3" fill="none">
+    <path d="M424 297H578l-12-10m12 10-12 10"/>
+    <path d="M424 405H578l-12-10m12 10-12 10"/>
+    <path d="M424 513H578l-12-10m12 10-12 10"/>
+  </g>
+</svg>

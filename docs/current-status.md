@@ -34,7 +34,7 @@ both records and their sequence.
 The observed primary stacks remain RoadRunner R2025a / integration 1.4.4,
 CARLA 0.9.16 / Source Unreal 4.26.2, matching Package CARLA 0.9.16 and vanilla
 Unreal 4.27.2. No compatibility entry is changed to verified by this update.
-Earlier details remain in [verification history](../VERIFICATION_STATUS.md)
+Earlier details remain in [verification history](../development/shared/archive/VERIFICATION_STATUS.md)
 and the [historical binding summary](../development/shared/release-research/historical-evidence-binding-summary.md).
 
 ## Latest lightweight checks

@@ -69,7 +69,7 @@ CMTK_EXECUTION_CONTEXT=host-cpython .venv/bin/python \
   plugins/carla-map-migration-toolkit/scripts/cmtk.py --help
 ```
 
-An optional rights-safe L1 smoke then exercises inspection, plan sealing, plan
+An optional engine-free script example (L1) exercises inspection, plan sealing, plan
 verification and the expected runtime-evidence safe stop without CARLA, Unreal
 or customer assets:
 

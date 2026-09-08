@@ -1,0 +1,62 @@
+name: Compatibility report
+description: Report one observed map route and version combination
+title: "[Compatibility] "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not upload private maps, XODR, credentials, machine paths or full raw logs. For security issues follow SECURITY.md instead."
+  - type: dropdown
+    id: route
+    attributes:
+      label: Migration route
+      options:
+        - RoadRunner to Source CARLA
+        - Source CARLA to Package CARLA
+        - Source CARLA to vanilla UE4.27
+    validations:
+      required: true
+  - type: input
+    id: profile
+    attributes:
+      label: Source and target Profile
+      description: "Include whether the result is Source, Package, UE4.27 target or cold-copy."
+    validations:
+      required: true
+  - type: textarea
+    id: versions
+    attributes:
+      label: Exact environment
+      description: "Toolkit commit, OS/architecture, CARLA version, Source/target Unreal versions, RoadRunner/exporter version if relevant (otherwise N/A), Python/client version."
+    validations:
+      required: true
+  - type: textarea
+    id: checks
+    attributes:
+      label: What actually ran
+      description: "Separate host inspection, Editor reopen, runtime/PIE, collision, bounded drive and cold-copy. Include PASS/FAIL/BLOCKED/NOT_RUN and exact reason codes; no compatibility promotion is automatic."
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: "Short error/log excerpt and public-safe evidence links. Never attach full logs or private assets."
+    validations:
+      required: true
+  - type: dropdown
+    id: sharing
+    attributes:
+      label: Reproduction material rights
+      options:
+        - No assets can be shared; sanitized description only
+        - Original text-only fixture can be shared
+        - Asset sharing may be possible after separate rights review
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed private identifiers and have permission to share the included material.
+          required: true

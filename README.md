@@ -1,19 +1,33 @@
 # CARLA Map Migration Toolkit
 
-Three Codex Skills for importing, packaging and delivering custom CARLA maps.
+Codex Plugin + CLI tooling for inspecting, planning, repairing and validating
+custom CARLA maps across RoadRunner, Source CARLA, Package CARLA and vanilla
+Unreal Engine 4.27.
 
-```text
-RoadRunner    ── Import & Repair ──► Source CARLA
-Source CARLA ── Cook & Verify ─────► Package CARLA
-Source CARLA ── Detach & Repair ───► Vanilla UE4.27
+[![CI](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/workflows/logic-tests.yml/badge.svg)](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/workflows/logic-tests.yml)
+[Apache-2.0](LICENSE) · Experimental · [中文](README.zh-CN.md)
+
+```mermaid
+flowchart TB
+    accTitle: Three custom map migration routes
+    accDescr: RoadRunner imports into Source CARLA, which has separate Package CARLA and vanilla UE4.27 delivery routes.
+    roadrunner["RoadRunner<br/>Datasmith / FBX + OpenDRIVE"] -->|"Import · Repair"| source_carla["Source CARLA"]
+    source_carla -->|"Cook · Audit · Verify"| package_carla["Package CARLA"]
+    source_carla -->|"Detach · Repair · Cold-copy"| ue427["Vanilla Unreal Engine 4.27"]
 ```
 
-[中文](README.zh-CN.md) · [Installation](docs/installation.md) · [Capabilities](docs/capabilities.md) · [Evidence & limitations](docs/current-status.md)
+## Why this exists
 
-An experimental Codex Plugin combining map-processing guidance with scripts for
-inspection, planning, package audits and performance comparisons. It helps Codex
-follow repeatable workflows; it is not a one-click converter. Imports, repairs,
-builds and runtime checks still require your own tools and authorized Editor/API operations.
+A CARLA custom map can look correct in the Editor while OpenDRIVE (XODR),
+waypoints, spawn points or traffic still need checking. A working Source CARLA
+map does not guarantee a complete cooked Package CARLA map. Moving assets to
+vanilla UE4.27 adds dependency, material, reference, collision and lighting checks.
+
+This toolkit turns those recurring tasks into route-specific Codex workflows
+and reusable host tooling: inspect inputs, seal plans, audit packages, produce
+delivery manifests, compare performance and record structured evidence. It is
+more than prompts, without treating a script check as an engine operation.
+Try the [engine-free script example](demo/quickstart/README.md) before supplying a map.
 
 ## Choose your route
 
@@ -63,7 +77,7 @@ Use $carla-map-migration-toolkit:source-carla-to-ue427. Inspect my Source CARLA 
 ```
 
 No engine or map available? In a separate terminal at the clone root, try the
-[synthetic host demo](demo/quickstart/README.md):
+[engine-free script example](demo/quickstart/README.md):
 
 ```bash
 demo_root="$(mktemp -d -t cmtk-quickstart.XXXXXX)"
@@ -71,12 +85,31 @@ demo_root="$(mktemp -d -t cmtk-quickstart.XXXXXX)"
 ```
 
 Expected: `demo_status: PASS`, `route_validation_status: NOT_RUN`.
-The demo checks planning logic, not a real map import.
+The example checks planning logic, not a real map import. There is currently no
+public, downloadable real-map demo.
+
+## What is automated?
+
+The Plugin includes three route-specific Codex Skills. Its shared CLI, JSON
+schemas and evidence checks are also usable directly. v0.1 distributes the
+complete Plugin, not a standalone PyPI package.
+
+| Capability | Host tooling | Editor / engine checkpoint |
+|---|---|---|
+| Workspace and input checks | `inspect` | Verify declared versions and live facts |
+| Plan creation and integrity | `plan`, `verify-plan` | No asset changes executed |
+| Archive, Content and manifests | `archive-audit`, `content-audit`, `map-package-audit`, `delivery-manifest` | No Cook or binary-reference inspection |
+| Performance comparisons | `compare-metrics`, `compare-performance` | Collect matched samples and validate changes |
+| Dataprep Import / Execute / Commit; asset repairs | Guided workflow | Required Editor / Unreal API work |
+| CARLA runtime, PIE and cross-project checks | `record-stage-evidence` validates supplied receipts | Required CARLA / Unreal execution |
+
+`validate` creates a pending report; it returns `NOT_RUN` without engine
+evidence, not an automatic runtime test. See [capabilities](docs/capabilities.md).
 
 ## What has been verified?
 
-[435 automated tests passed for commit 6222f0c](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/runs/34193021128).
-These cover structure, host logic and synthetic fixtures; engine jobs were skipped.
+Hosted CI checks structure, host logic and synthetic fixtures, not engine execution.
+Commit-bound results are in [current status](docs/current-status.md).
 All three routes also have historical real-use records, including second-project
 UE4.27 checks and Content-only delivery. Coverage is case-specific, not a guarantee
 for every map or version. Complete end-to-end evidence under the toolkit's current
@@ -87,12 +120,48 @@ Inspection and planning are the default. Asset changes require explicit approval
 engine-aware backups and validation; high-risk optimizations require review.
 This repository includes no customer maps, XODR or engine binaries.
 
-## Further reading
+## Why CARLA 0.9.x / UE4.27?
 
+The observed primary stack is RoadRunner R2025a, CARLA 0.9.16, Source UE 4.26.2
+and vanilla UE4.27.2. This deliberately scopes the custom-map workflow; it is
+not a universally verified compatibility matrix.
+[CARLA 0.10.0 introduced its UE5.5 stack](https://carla.org/2024/12/19/release-0.10.0/).
+The 0.9.x evidence does not transfer automatically to that route. CARLA 0.10 / UE5
+research is [backlog](docs/release/github-settings-checklist.md#backlog), not current support.
+
+## Troubleshooting
+
+Missing waypoints, a map absent after Cook, black materials in UE4.27, or slower
+performance after optimization? Start with the [symptom-based cookbook](docs/troubleshooting/README.md)
+for CLI commands, Editor checkpoints and evidence to keep.
+
+<!-- GOLDEN_MAP_SHOWCASE_START -->
+## Real-map showcase
+
+An anonymized real-use case shows migration into UE4.27, sky/material repairs,
+and rollback of a LOD candidate that did not improve overall performance.
+
+| Before repairs | After repairs |
+|---|---|
+| ![Earlier scene with abnormal sky](docs/assets/showcase/before.png) | ![Final sunny scene](docs/assets/showcase/after.png) |
+
+[Read the migration, repair and performance case (Chinese)](docs/cases/source-carla-to-ue427.zh-CN.md).
+Historical, case-specific evidence; screenshots are not performance measurements.
+No public downloadable real-map demo is available yet. The maintainer will supply future input;
+the [Golden Map onboarding framework](development/shared/plans/golden-map/README.md)
+defines rights, inputs, validation and media capture. The runnable script example
+uses synthetic text, not a map migration.
+<!-- GOLDEN_MAP_SHOWCASE_END -->
+
+## Documentation
+
+- [Installation](docs/installation.md) · [Script example](demo/quickstart/README.md) · [Capabilities](docs/capabilities.md) · [Evidence](docs/current-status.md)
 - [Known limitations](KNOWN_LIMITATIONS.md) — unsupported behavior and implementation gaps
 - [Contributing](CONTRIBUTING.md) — development setup and change guidelines
 - [Development reference index](development/shared/README.md) — design, evidence rules and historical reports
 - [Changelog](CHANGELOG.md) — development and release history
+
+Contributors and maintainers: see [release preparation](docs/release/github-settings-checklist.md) and the development reference index.
 
 <details>
 <summary>Developer commands and direct CLI example</summary>
@@ -128,3 +197,5 @@ The license covers original project material, not third-party maps or engines.
 This is an independent community project, not affiliated with or endorsed by
 CARLA, Epic Games or MathWorks RoadRunner. Follow [SECURITY.md](SECURITY.md)
 for security reports; do not disclose sensitive details in public issues.
+
+If this toolkit helps your CARLA map workflow, feedback, issues and contributions are welcome.

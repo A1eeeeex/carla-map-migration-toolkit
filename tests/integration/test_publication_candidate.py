@@ -10,6 +10,7 @@ from conftest import REPO_ROOT
 from development.shared.release_tools.publication_audit import (
     FORBIDDEN_PUBLIC_SUFFIXES,
     _contains_binary_content,
+    is_approved_showcase_media,
 )
 
 _MANIFEST_PATH = REPO_ROOT / "PUBLICATION_ALLOWLIST.json"
@@ -59,7 +60,11 @@ def test_publication_candidate_has_no_forbidden_binary_or_asset_suffix():
     manifest = _load_manifest()
     forbidden = {suffix.lower() for suffix in manifest["forbidden_suffixes"]}
     assert forbidden == FORBIDDEN_PUBLIC_SUFFIXES
-    offenders = [path for path in _candidate_files(manifest) if Path(path).suffix.lower() in forbidden]
+    offenders = [
+        path for path in _candidate_files(manifest)
+        if Path(path).suffix.lower() in forbidden
+        and not is_approved_showcase_media(path, (REPO_ROOT / path).read_bytes())
+    ]
     assert offenders == []
 
 
@@ -68,6 +73,7 @@ def test_publication_candidate_contains_only_utf8_text_files():
         relative_path
         for relative_path in sorted(_candidate_files(_load_manifest()))
         if _contains_binary_content((REPO_ROOT / relative_path).read_bytes())
+        and not is_approved_showcase_media(relative_path, (REPO_ROOT / relative_path).read_bytes())
     ]
     assert offenders == []
 
@@ -89,3 +95,13 @@ def test_publication_candidate_has_no_unapproved_host_path_or_secret_assignment(
             if prohibited.casefold() in content.casefold():
                 offenders.append({"path": relative_path, "class": "private-identifier"})
     assert offenders == []
+
+
+def test_showcase_exception_requires_exact_path_and_bytes():
+    for name in ("before.png", "after.png"):
+        path = "docs/assets/showcase/" + name
+        content = (REPO_ROOT / path).read_bytes()
+        assert is_approved_showcase_media(path, content)
+        assert not is_approved_showcase_media(path, content + b"changed")
+        assert not is_approved_showcase_media("unreviewed/" + name, content)
+        assert not is_approved_showcase_media("map.umap", content)

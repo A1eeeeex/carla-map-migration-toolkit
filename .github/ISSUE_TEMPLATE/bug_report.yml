@@ -1,0 +1,34 @@
+name: Bug report
+description: Report a reproducible host-tooling or route-workflow problem
+title: "[Bug] "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not upload private maps, XODR, credentials, machine paths or full raw logs. For security issues follow SECURITY.md instead."
+  - type: textarea
+    id: problem
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Versions and route
+      description: "Toolkit commit, OS, Python, Codex, CARLA/Unreal/RoadRunner where relevant; route and Profile."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: "Exact command with sanitized paths, reason code, short sanitized output, and whether a text-only fixture reproduces it. Assets are not required."
+    validations:
+      required: true
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Before submitting
+      options:
+        - label: I removed private identifiers and have permission to share the included material.
+          required: true

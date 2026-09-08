@@ -1,5 +1,8 @@
 # Phase A Closeout
 
+> Archived development record. Statements and repository-root paths below describe
+> the recorded period, not current release status. See [current status](../../../docs/current-status.md).
+
 ## 1. Executive Status
 
 ```text

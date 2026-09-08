@@ -9,6 +9,16 @@ import unicodedata
 from pathlib import Path
 
 MAX_SCAN_BYTES = 64 * 1024 * 1024
+APPROVED_SHOWCASE_MEDIA = {
+    "docs/assets/showcase/before.png": "38988f25d71b81355d03e44ff4161afbf3ce663f3f8a26017f58d32bc878f145",
+    "docs/assets/showcase/after.png": "5c4d0479c0129cc31f1911883fc448bf7510eec5242a3f1e66635dd91e6f88f0",
+}
+
+
+def is_approved_showcase_media(path: str, content: bytes) -> bool:
+    return APPROVED_SHOWCASE_MEDIA.get(path) == hashlib.sha256(content).hexdigest()
+
+
 FORBIDDEN_PUBLIC_SUFFIXES = frozenset(
     {
         ".7z",
@@ -93,7 +103,9 @@ def _blocked_report(reason_code: str, literals: list[str], literals_sha256: str 
     }
 
 
-def _scan_history_objects(repo: Path, object_ids: list[str], literals: list[str]) -> tuple[list[dict[str, str]], bool]:
+def _scan_history_objects(
+    repo: Path, object_ids: list[str], literals: list[str], approved_blob_ids: frozenset[str] = frozenset()
+) -> tuple[list[dict[str, str]], bool]:
     findings: list[dict[str, str]] = []
     process = subprocess.Popen(
         ["git", "cat-file", "--batch"],
@@ -128,7 +140,7 @@ def _scan_history_objects(repo: Path, object_ids: list[str], literals: list[str]
                         "subject_sha256": _subject_fingerprint(object_id),
                     }
                 )
-            if object_type == b"blob" and _contains_binary_content(content):
+            if object_type == b"blob" and _contains_binary_content(content) and object_id not in approved_blob_ids:
                 findings.append(
                     {
                         "scope": "git_history",
@@ -184,7 +196,8 @@ def audit_repository(repo: Path, private_literals: Path, external_root: Path) ->
         return _blocked_report("PUBLICATION-SCAN-INPUT-TOO-LARGE", literals, literals_sha256)
     for relative_path in tracked_paths:
         content = (repo / relative_path).read_bytes()
-        if _has_forbidden_public_suffix(relative_path):
+        approved_media = is_approved_showcase_media(relative_path, content)
+        if _has_forbidden_public_suffix(relative_path) and not approved_media:
             findings.append(
                 {
                     "scope": "working_tree",
@@ -192,7 +205,7 @@ def audit_repository(repo: Path, private_literals: Path, external_root: Path) ->
                     "subject_sha256": _subject_fingerprint(relative_path),
                 }
             )
-        if _contains_binary_content(content):
+        if _contains_binary_content(content) and not approved_media:
             findings.append(
                 {
                     "scope": "working_tree",
@@ -209,11 +222,18 @@ def audit_repository(repo: Path, private_literals: Path, external_root: Path) ->
                 }
             )
 
+    approved_blob_ids = frozenset(
+        _git(repo, "hash-object", "--", path).decode().strip()
+        for path in APPROVED_SHOWCASE_MEDIA
+        if (repo / path).is_file() and is_approved_showcase_media(path, (repo / path).read_bytes())
+    )
     history_objects: set[str] = set()
     for line in _git(repo, "rev-list", "--objects", "--all").decode().splitlines():
         object_id, *path_parts = line.split(" ", 1)
         history_objects.add(object_id)
-        if path_parts and _has_forbidden_public_suffix(path_parts[0]):
+        if path_parts and _has_forbidden_public_suffix(path_parts[0]) and not (
+            path_parts[0] in APPROVED_SHOWCASE_MEDIA and object_id in approved_blob_ids
+        ):
             findings.append(
                 {
                     "scope": "git_history",
@@ -221,7 +241,9 @@ def audit_repository(repo: Path, private_literals: Path, external_root: Path) ->
                     "subject_sha256": _subject_fingerprint(path_parts[0]),
                 }
             )
-    history_findings, history_too_large = _scan_history_objects(repo, sorted(history_objects), literals)
+    history_findings, history_too_large = _scan_history_objects(
+        repo, sorted(history_objects), literals, approved_blob_ids
+    )
     if history_too_large:
         return _blocked_report("PUBLICATION-SCAN-INPUT-TOO-LARGE", literals, literals_sha256)
     findings.extend(history_findings)

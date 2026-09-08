@@ -11,8 +11,6 @@ from conftest import PLUGIN_ROOT, REPO_ROOT
 
 CLAIM_DOCS = {
     "claims.md",
-    "non-claims.md",
-    "support-status.md",
     "acceptance-contracts.md",
     "proof-model.md",
     "claim-test-traceability.md",
@@ -218,6 +216,9 @@ def test_claim_docs_exist_and_registry_ids_are_traceable():
     assert {path.name for path in docs_root.glob("*.md")} >= CLAIM_DOCS
     claims_text = (docs_root / "claims.md").read_text(encoding="utf-8")
     traceability_text = (docs_root / "claim-test-traceability.md").read_text(encoding="utf-8")
+    assert "## Non-claims" in claims_text
+    assert "## Support status" in claims_text
+    assert all(f"`{status}`" in claims_text for status in SUPPORT_STATUSES)
     for claim in _registry()["claims"]:
         assert claim["id"] in claims_text
         assert claim["id"] in traceability_text

@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — productization
+
+- Clarify Plugin + CLI positioning, three-route visual, automation boundaries and installation.
+- Add five troubleshooting guides, community report forms and Golden Map onboarding protocols.
+- Prepare an original social-preview SVG and experimental release/settings handoff.
+- Archive dated reports, consolidate claim definitions and separate runnable examples from plans.
+- Add an anonymized UE4.27 case with two authorized screenshots and an explicitly rejected LOD experiment.
+- Pin screenshot publication exceptions to exact paths and SHA256; no map assets or real Golden Map are included.
+
 ## 0.1.0 — Experimental first release
 
 This source release is experimental, not an accepted strict v0.1.0-rc.

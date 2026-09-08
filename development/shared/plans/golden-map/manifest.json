@@ -76,8 +76,13 @@
     }
   ],
   "public_files": [
-    "demo/golden-map/README.md",
-    "demo/golden-map/manifest.json"
+    "development/shared/plans/golden-map/README.md",
+    "development/shared/plans/golden-map/INPUT_CONTRACT.md",
+    "development/shared/plans/golden-map/RIGHTS_CHECKLIST.md",
+    "development/shared/plans/golden-map/RUNBOOK.md",
+    "development/shared/plans/golden-map/CAPTURE_CHECKLIST.md",
+    "development/shared/plans/golden-map/EVIDENCE_CHECKLIST.md",
+    "development/shared/plans/golden-map/manifest.json"
   ],
   "private_files": [],
   "generation_steps": [

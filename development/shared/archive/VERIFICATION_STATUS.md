@@ -1,5 +1,8 @@
 # Verification status
 
+> Archived development record. Statements and repository-root paths below describe
+> the recorded period, not current release status. See [current status](../../../docs/current-status.md).
+
 Date: 2026-09-05 (Asia/Shanghai)
 
 ## Current release-preparation update
@@ -19,13 +22,13 @@ Date: 2026-09-05 (Asia/Shanghai)
   evaluation. Earlier full routing work had 72/73 passes; retain that failure
   rather than rewriting its historical result.
 - Current installation/targeted-check and snapshot/privacy results are in the
-  [release checklist](docs/release-readiness.md). No engine or CARLA server is
+  [release checklist](../../../docs/release-readiness.md). No engine or CARLA server is
   launched for this closeout; no complete Verified Run is manufactured.
 
 ## Earlier implementation snapshot (2026-09-01)
 
 The following history predates the later reimport/second-project records
-summarized in [current status](docs/current-status.md).
+summarized in [current status](../../../docs/current-status.md).
 
 ## Scope and environment
 

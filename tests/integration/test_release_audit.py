@@ -15,6 +15,36 @@ def _git(repo: Path, *args: str) -> None:
     subprocess.run(["git", *args], cwd=repo, check=True, capture_output=True)
 
 
+def test_reviewed_showcase_passes_tree_and_history_but_not_external_binary(tmp_path: Path):
+    from development.shared.release_tools.publication_audit import audit_repository
+
+    candidate = tmp_path / "candidate"
+    candidate.mkdir()
+    _git(candidate, "init", "--quiet")
+    _git(candidate, "config", "user.name", "Anonymous Fixture")
+    _git(candidate, "config", "user.email", "fixture@example.invalid")
+    path = "docs/assets/showcase/before.png"
+    image = candidate / path
+    image.parent.mkdir(parents=True)
+    content = (REPO_ROOT / path).read_bytes()
+    image.write_bytes(content)
+    _git(candidate, "add", path)
+    _git(candidate, "commit", "--quiet", "-m", "reviewed media")
+    terms = tmp_path / "terms.txt"
+    terms.write_text("private-project\n")
+    export = tmp_path / "export"
+    export.mkdir()
+    (export / "summary.txt").write_text("anonymous fixture\n")
+    assert audit_repository(candidate, terms, export)["status"] == "PASS"
+    (export / "before.png").write_bytes(content)
+    assert audit_repository(candidate, terms, export)["status"] == "FAIL"
+    (export / "before.png").unlink()
+    image.write_bytes(content + b"unreviewed")
+    _git(candidate, "add", path)
+    _git(candidate, "commit", "--quiet", "-m", "changed media")
+    assert audit_repository(candidate, terms, export)["status"] == "FAIL"
+
+
 def test_release_audit_scans_tree_history_and_external_export_without_echoing_terms(tmp_path: Path):
     candidate = tmp_path / "candidate"
     candidate.mkdir()

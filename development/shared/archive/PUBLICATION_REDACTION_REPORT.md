@@ -1,5 +1,8 @@
 # Publication redaction report
 
+> Archived development record. Statements and repository-root paths below describe
+> the recorded period, not current release status. See [current status](../../../docs/current-status.md).
+
 Updated: 2026-09-08
 
 ## Authorized experimental publication update
@@ -42,7 +45,7 @@ passed 11/11 cases. This is not full installed-invocation accuracy evidence.
 These results replace the older snapshot counts below for the local source
 candidate only. They do not close the retained GitHub Actions export gate,
 establish an exact committed clone or manufacture complete current-contract
-Verified Runs. See the [release checklist](docs/release-readiness.md) for the
+Verified Runs. See the [release checklist](../../../docs/release-readiness.md) for the
 proposed experimental release grade and the unchanged strict RC requirements.
 
 ## Historical audit snapshot — 2026-09-01

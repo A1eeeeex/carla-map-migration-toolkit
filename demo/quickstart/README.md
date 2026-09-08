@@ -1,6 +1,6 @@
-# Rights-safe quickstart
+# Engine-free script example
 
-This demo proves that the host-side Toolkit can inspect an anonymous
+This runnable script example proves that the host-side Toolkit can inspect an anonymous
 RoadRunner-shaped input, seal a read-only migration plan, detect plan changes,
 and stop honestly when real Editor/runtime evidence is absent.
 

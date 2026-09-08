@@ -1,19 +1,31 @@
 # CARLA 地图迁移工具包
 
-三项 Codex Skill，帮助你导入、打包和交付自定义 CARLA 地图。
+Codex Plugin + CLI 工具，帮助你在 RoadRunner、Source CARLA、Package CARLA
+和原版 Unreal Engine 4.27 之间检查、规划、修复、验证与交付自定义地图。
 
-```text
-RoadRunner    ── 导入与修复 ──► Source CARLA
-Source CARLA ── Cook 与验证 ──► Package CARLA
-Source CARLA ── 解耦与修复 ──► 原版 UE4.27
+[![CI](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/workflows/logic-tests.yml/badge.svg)](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/workflows/logic-tests.yml)
+[Apache-2.0](LICENSE) · Experimental · [English](README.md)
+
+```mermaid
+flowchart TB
+    accTitle: Three custom map migration routes
+    accDescr: RoadRunner imports into Source CARLA, which has separate Package CARLA and vanilla UE4.27 delivery routes.
+    roadrunner["RoadRunner<br/>Datasmith / FBX + OpenDRIVE"] -->|"Import · Repair"| source_carla["Source CARLA"]
+    source_carla -->|"Cook · Audit · Verify"| package_carla["Package CARLA"]
+    source_carla -->|"Detach · Repair · Cold-copy"| ue427["Vanilla Unreal Engine 4.27"]
 ```
 
-[English](README.md) · [安装说明](docs/installation.md) · [能力清单](docs/capabilities.md) · [实测与限制](docs/current-status.md)
+## 为什么需要这个工具包？
 
-这是一个实验性的 Codex Plugin：把地图处理经验整理成操作流程，配合检查、
-规划、包体审计和性能比较脚本，帮助 Codex 按步骤处理常见问题。
-它不是一键地图转换器；导入、修复、构建和实际运行，仍需要你自己的引擎环境
-以及经过授权的编辑器/API 操作。
+地图在编辑器里看起来正常，不等于 CARLA 的 OpenDRIVE（XODR）、waypoints、
+spawn 或交通功能正常；Source CARLA 能打开，也不代表 Cook 后的 Package CARLA
+能完整加载。迁移到原版 UE4.27 时，还需要检查 CARLA 类依赖、材质、引用、
+碰撞和光照。每次手工排查，容易漏项，也难以说清到底验证了什么。
+
+工具包把这些经验组织为三条路线的 Codex 工作流，并提供可独立运行的主机脚本：
+检查输入、封存计划、审计包体、生成交付清单、比较性能、记录结构化证据。
+不是只有 Prompt；也不会把脚本检查冒充引擎操作。没有地图也能先试
+[无需引擎的脚本示例](demo/quickstart/README.md)。
 
 ## 选择你要做的事
 
@@ -62,7 +74,7 @@ Use $carla-map-migration-toolkit:source-carla-to-ue427. 检查我的 Source CARL
 ```
 
 没有引擎和地图也可以试用。在另一个终端进入克隆目录，运行
-[纯文本演示](demo/quickstart/README.md)：
+[无需引擎的脚本示例](demo/quickstart/README.md)：
 
 ```bash
 demo_root="$(mktemp -d -t cmtk-quickstart.XXXXXX)"
@@ -71,11 +83,29 @@ demo_root="$(mktemp -d -t cmtk-quickstart.XXXXXX)"
 
 预期输出：`demo_status: PASS`、`route_validation_status: NOT_RUN`。
 意思是计划逻辑检查通过，真实地图导入没有执行，不是报错。
+目前没有可供下载、在引擎中复现的公开真实地图 Demo。
+
+## 哪些自动完成？
+
+Plugin 包含三项路线 Skill；共享 CLI、JSON Schema 和证据检查也可直接使用。
+v0.1 的正式分发单位仍是完整 Plugin，不是 PyPI 包。
+
+| 能力 | 主机工具 | 编辑器 / 引擎环境 |
+|---|---|---|
+| 工作区、路径和输入检查 | `inspect` 自动检查声明的输入 | 实际版本和资产事实仍需核实 |
+| 生成与校验计划 | `plan` / `verify-plan` | 不执行资产改动 |
+| 包体、Content 和文件清单 | `archive-audit` / `content-audit` / `map-package-audit` / `delivery-manifest` | 不执行 Cook 或解读二进制引用 |
+| 性能数据比较 | `compare-metrics` / `compare-performance` | 采样、优化和功能复验需引擎 |
+| Dataprep 导入与提交、资产修复 | 提供操作与故障指引 | 需要编辑器 / Unreal API |
+| Runtime、PIE 与跨项目复制验收 | `record-stage-evidence` 记录并校验提供的证据 | 需要相应 CARLA / Unreal 环境 |
+
+`validate` 生成待验证报告；没有引擎证据时返回 `NOT_RUN`，不是自动实机测试。
+详细范围见[能力清单](docs/capabilities.md)。
 
 ## 实际验证到什么程度？
 
-[提交 6222f0c 的 435 项自动测试全部通过](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/runs/34193021128)，
-覆盖结构、主机脚本逻辑和模拟数据；引擎测试在该次 CI 中跳过。
+主机 CI 覆盖结构、脚本逻辑和模拟数据，不执行引擎验证。
+绑定提交的测试结果统一见[当前状态](docs/current-status.md)。
 三条路线也都有历史实操记录，包括第二个 UE4.27 项目检查和 Content-only
 交付。但这些是特定案例，不代表所有地图和版本都兼容；按工具包现行格式记录
 的完整端到端证据仍未齐，因此当前是实验版，不是已严格验收的 RC。
@@ -84,12 +114,46 @@ demo_root="$(mktemp -d -t cmtk-quickstart.XXXXXX)"
 修改资产需明确授权、引擎适用的备份和实际验证，高风险优化需要审查。
 仓库不提供客户地图、XODR 或引擎二进制。
 
-## 按需阅读
+## 为什么仍然是 CARLA 0.9.x / UE4.27？
 
+当前观察到的主要环境是 RoadRunner R2025a、CARLA 0.9.16、Source UE 4.26.2
+和原版 UE4.27.2。这是有意限定的自定义地图工程范围，不是全版本兼容认证。
+[CARLA 0.10.0 官方发布说明](https://carla.org/2024/12/19/release-0.10.0/)
+介绍了 UE5.5 路线；现有 0.9.x 案例不能直接外推到它。0.10 / UE5 支持需要
+独立研究和验证，目前只在[后续计划](docs/release/github-settings-checklist.md#backlog)中。
+
+## 故障排查
+
+地图有画面却没有 waypoints、Cook 后地图缺失、UE4.27 黑材质或性能退化？
+从[故障指南](docs/troubleshooting/README.md)按症状查找命令、编辑器检查点和验收边界。
+
+<!-- GOLDEN_MAP_SHOWCASE_START -->
+## 公开地图案例
+
+一个匿名真实案例：把自定义道路场景迁入 UE4.27，修复天空与材质，
+并根据实测结果回滚无收益的 LOD 调整。
+
+| 修复前 | 修复后 |
+|---|---|
+| ![较早基线中的异常天空](docs/assets/showcase/before.png) | ![最终晴天修复结果](docs/assets/showcase/after.png) |
+
+[查看迁移步骤、修复方法与性能结果](docs/cases/source-carla-to-ue427.zh-CN.md)。
+这是单个历史案例展示，不提供地图资产；截图不是性能采样画面。
+
+可下载、可复现的小地图 Demo 将另行提供；
+[Golden Map 接入框架](development/shared/plans/golden-map/README.md)
+规定输入、权利、证据与媒体采集要求。现有脚本示例使用模拟文本，不是地图迁移。
+<!-- GOLDEN_MAP_SHOWCASE_END -->
+
+## 文档导航
+
+- [安装](docs/installation.md) · [脚本示例](demo/quickstart/README.md) · [能力清单](docs/capabilities.md) · [实测范围](docs/current-status.md)
 - [已知限制](KNOWN_LIMITATIONS.md)：尚未实现或不支持的行为
 - [贡献指南](CONTRIBUTING.md)：开发环境与修改要求
 - [开发参考索引](development/shared/README.md)：设计、证据规则和历史报告
 - [更新记录](CHANGELOG.md)：开发与版本历史
+
+贡献者与维护者另见[发布准备](docs/release/github-settings-checklist.md)和开发参考索引。
 
 <details>
 <summary>开发者测试命令</summary>
@@ -114,3 +178,5 @@ PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 \
 许可证仅覆盖本项目有权发布的原创材料，不授予第三方地图或引擎的使用权。
 本项目独立于 CARLA、Epic Games 和 MathWorks RoadRunner，不代表官方或获得
 其背书。安全问题请遵循 [SECURITY.md](SECURITY.md)，不要在公开 Issue 披露敏感细节。
+
+欢迎反馈实际地图工作流中的问题、兼容性记录和改进建议；请先脱敏再分享。

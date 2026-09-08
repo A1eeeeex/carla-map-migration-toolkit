@@ -1,5 +1,8 @@
 # Implementation report
 
+> Archived development record. Statements and repository-root paths below describe
+> the recorded period, not current release status. See [current status](../../../docs/current-status.md).
+
 Date: 2026-09-01 (Asia/Shanghai)
 
 ## Route and Profile scope

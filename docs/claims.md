@@ -1,4 +1,4 @@
-# Public claims
+# Claims, boundaries and support status
 
 The machine-readable source is
 [`claims-registry.example.json`](../plugins/carla-map-migration-toolkit/examples/claims-registry.example.json).
@@ -21,3 +21,37 @@ This page summarizes current claims; it does not upgrade their status.
 
 `implemented` means code and L0-L2 tests exist; it is not proof that a real map
 migration succeeded. No current route has a verified run.
+
+## Non-claims
+
+The toolkit does not claim:
+
+- one-click migration for arbitrary maps;
+- compatibility with every CARLA, RoadRunner, Unreal or operating-system version;
+- automatic repair of arbitrary OpenDRIVE topology;
+- migration of CARLA server, Traffic Manager, sensors, vehicles or Python API
+  behavior into vanilla UE4.27;
+- cross-operating-system reuse of cooked map packages;
+- replacement of official RoadRunner, Unreal Editor or CARLA workflows;
+- that fixture or CI success proves a real Editor/runtime migration;
+- that optimization cannot change visual or simulation behavior;
+- that customer maps or third-party assets may be redistributed.
+
+Unknown rights, versions or dependencies remain `unknown` or `blocked`; they are
+not silently interpreted as supported.
+
+## Support status
+
+| Status | Meaning |
+|---|---|
+| `planned` | Contract and route are defined, but implementation is incomplete. |
+| `implemented` | Code and relevant L0-L2 tests exist; no real-route success is implied. |
+| `maintainer-verified` | A maintainer produced a complete evidence record in the required real environment. |
+| `community-verified` | An external user produced contract-complete evidence accepted by a maintainer. |
+| `experimental` | Partial implementation/evidence exists without a stable compatibility commitment. |
+| `unsupported` | The combination or behavior is explicitly outside the supported scope. |
+| `unknown` | Evidence or identity is insufficient. |
+
+For Source CARLA → UE4.27, `maintainer-verified` additionally requires a second,
+independent vanilla UE4.27 project cold-copy. `NOT_RUN` is a check result and
+never aggregates to PASS.

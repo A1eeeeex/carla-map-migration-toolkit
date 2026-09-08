@@ -1,0 +1,21 @@
+name: Feature request
+description: Propose a scoped improvement to a supported map workflow
+title: "[Feature] "
+body:
+  - type: markdown
+    attributes:
+      value: "Do not upload private maps, XODR, credentials, machine paths or full raw logs. For security issues follow SECURITY.md instead."
+  - type: textarea
+    id: need
+    attributes:
+      label: Which map-workflow problem would this solve?
+      description: "Name the route/Profile and current workaround. Do not include private map names."
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and acceptance check
+      description: "Distinguish host automation from required engine work and describe a safe, reproducible check."
+    validations:
+      required: true
