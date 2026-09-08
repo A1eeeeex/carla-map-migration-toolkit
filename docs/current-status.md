@@ -37,15 +37,26 @@ Unreal 4.27.2. No compatibility entry is changed to verified by this update.
 Earlier details remain in [verification history](../development/shared/archive/VERIFICATION_STATUS.md)
 and the [historical binding summary](../development/shared/release-research/historical-evidence-binding-summary.md).
 
-## Latest lightweight checks
+## Latest hosted source checks
 
-The public source commit `6222f0c` passed
+Public commit `1f39e62b1bdd850d3f26ebb4302ccd393ee8bd9b` passed
+[442 hosted tests](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/runs/34201162498).
+The `l0-l2` job passed; `unreal-and-carla` was **SKIPPED**, not passed.
+These checks cover host logic, structure, synthetic fixtures and documentation
+contracts. They are not Unreal/CARLA engine tests or a new installation rehearsal.
+That run predates the dedicated Ruff CI step.
+
+## Latest clean-clone / installation rehearsal
+
+Commit `6222f0c649eb1594617da6d82f36de49d0272f8b` separately passed
 [435 hosted tests](https://github.com/A1eeeeex/carla-map-migration-toolkit/actions/runs/34193021128)
-in 11.26 seconds. The Unreal/CARLA job was skipped, not passed. An exact local
-clone of that commit also passed runtime dependency installation, the anonymous
-host demo and isolated Plugin installation. These are installation and host checks,
-not new map migration evidence. The repository is now public; that does not by
-itself mean a GitHub Release has been published.
+in 11.26 seconds, with the engine job skipped. An exact local clone also passed
+runtime dependency installation, the anonymous host demo and isolated Plugin
+installation. This remains the latest recorded complete installation rehearsal;
+newer hosted CI does not replace it. Public source availability does not itself
+mean a GitHub Release has been published.
+
+## Earlier checks and observations
 
 The September 5 integration passed 435 host/fixture/structure tests, three
 Skill validators and changed-file lint. A read-only audit of an existing

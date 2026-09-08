@@ -1,5 +1,13 @@
 # Changelog
 
+## Finalization — Experimental Public Preview
+
+- Add the English UE4.27 case and cross-link both languages.
+- Move real-use screenshots before installation in both READMEs.
+- Separate latest hosted source checks from the older clean-clone rehearsal.
+- Pin Ruff 0.16.3 and run it as a distinct CI step before host tests.
+- Finalize release notes; retain original screenshots and planned Golden Map status.
+
 ## Unreleased — productization
 
 - Clarify Plugin + CLI positioning, three-route visual, automation boundaries and installation.

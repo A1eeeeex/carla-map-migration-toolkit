@@ -73,4 +73,11 @@ def test_golden_map_protocol_has_no_fabricated_execution():
         text = (REPO_ROOT / name).read_text()
         assert text.count("<!-- GOLDEN_MAP_SHOWCASE_START -->") == 1
         assert text.count("<!-- GOLDEN_MAP_SHOWCASE_END -->") == 1
+        install_heading = "## Install" if name == "README.md" else "## 安装"
+        assert text.index("<!-- GOLDEN_MAP_SHOWCASE_START -->") < text.index(install_heading)
+        case_name = "source-carla-to-ue427.md" if name == "README.md" else "source-carla-to-ue427.zh-CN.md"
+        assert f"(docs/cases/{case_name})" in text
+        case = (REPO_ROOT / "docs/cases" / case_name).read_text()
+        other = "source-carla-to-ue427.zh-CN.md" if name == "README.md" else "source-carla-to-ue427.md"
+        assert f"({other})" in case
         assert "```mermaid" in text

@@ -41,6 +41,7 @@ def test_declared_host_runtime_starts_from_a_standalone_plugin_copy(tmp_path: Pa
         "--requirement requirements-runtime.txt",
         "pytest==9.1.1",
         "PyYAML==6.0.3",
+        "ruff==0.16.3",
     ]
 
     plugin_copy = tmp_path / "carla-map-migration-toolkit"
@@ -134,3 +135,6 @@ def test_hosted_logic_ci_preserves_the_publication_clean_tree_contract():
         "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1",
     }
     assert job["steps"][-1]["run"] == "python -m pytest -q -p no:cacheprovider"
+    assert job["steps"][-2] == {"name": "Ruff", "run": "python -m ruff check ."}
+    requirements = (REPO_ROOT / "requirements-dev.txt").read_text()
+    assert "ruff==0.16.3" in requirements.splitlines()

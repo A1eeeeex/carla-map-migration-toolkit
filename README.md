@@ -29,6 +29,22 @@ delivery manifests, compare performance and record structured evidence. It is
 more than prompts, without treating a script check as an engine operation.
 Try the [engine-free script example](demo/quickstart/README.md) before supplying a map.
 
+<!-- GOLDEN_MAP_SHOWCASE_START -->
+## Real migration case
+
+A historical Source CARLA → vanilla UE4.27 case included migration of map dependencies,
+sky/material repair, clean-project checks and rollback of an ineffective LOD candidate.
+
+| Before repairs | After repairs |
+|---|---|
+| ![Earlier scene with abnormal sky](docs/assets/showcase/before.png) | ![Final sunny scene](docs/assets/showcase/after.png) |
+
+[Read the full case study](docs/cases/source-carla-to-ue427.md).
+Historical, case-specific evidence. Screenshots show appearance, not performance
+or universal compatibility. A downloadable [Golden Map](development/shared/plans/golden-map/README.md)
+remains planned and is separate from this case.
+<!-- GOLDEN_MAP_SHOWCASE_END -->
+
 ## Choose your route
 
 | Your task | Route guide |
@@ -134,24 +150,6 @@ research is [backlog](docs/release/github-settings-checklist.md#backlog), not cu
 Missing waypoints, a map absent after Cook, black materials in UE4.27, or slower
 performance after optimization? Start with the [symptom-based cookbook](docs/troubleshooting/README.md)
 for CLI commands, Editor checkpoints and evidence to keep.
-
-<!-- GOLDEN_MAP_SHOWCASE_START -->
-## Real-map showcase
-
-An anonymized real-use case shows migration into UE4.27, sky/material repairs,
-and rollback of a LOD candidate that did not improve overall performance.
-
-| Before repairs | After repairs |
-|---|---|
-| ![Earlier scene with abnormal sky](docs/assets/showcase/before.png) | ![Final sunny scene](docs/assets/showcase/after.png) |
-
-[Read the migration, repair and performance case (Chinese)](docs/cases/source-carla-to-ue427.zh-CN.md).
-Historical, case-specific evidence; screenshots are not performance measurements.
-No public downloadable real-map demo is available yet. The maintainer will supply future input;
-the [Golden Map onboarding framework](development/shared/plans/golden-map/README.md)
-defines rights, inputs, validation and media capture. The runnable script example
-uses synthetic text, not a map migration.
-<!-- GOLDEN_MAP_SHOWCASE_END -->
 
 ## Documentation
 

@@ -27,6 +27,21 @@ spawn 或交通功能正常；Source CARLA 能打开，也不代表 Cook 后的 
 不是只有 Prompt；也不会把脚本检查冒充引擎操作。没有地图也能先试
 [无需引擎的脚本示例](demo/quickstart/README.md)。
 
+<!-- GOLDEN_MAP_SHOWCASE_START -->
+## 真实迁移案例
+
+一个历史 Source CARLA → vanilla UE4.27 案例：迁移地图及依赖，
+修复天空与材质，检查干净项目，并回滚没有整体收益的 LOD 候选。
+
+| 修复前 | 修复后 |
+|---|---|
+| ![较早基线中的异常天空](docs/assets/showcase/before.png) | ![最终晴天修复结果](docs/assets/showcase/after.png) |
+
+[查看完整案例](docs/cases/source-carla-to-ue427.zh-CN.md)。
+这是单个历史案例；截图展示外观，不证明性能或普遍兼容性。
+可下载的 [Golden Map](development/shared/plans/golden-map/README.md) 仍在计划中，与本案例独立。
+<!-- GOLDEN_MAP_SHOWCASE_END -->
+
 ## 选择你要做的事
 
 | 你的目标 | 使用指南 |
@@ -126,24 +141,6 @@ v0.1 的正式分发单位仍是完整 Plugin，不是 PyPI 包。
 
 地图有画面却没有 waypoints、Cook 后地图缺失、UE4.27 黑材质或性能退化？
 从[故障指南](docs/troubleshooting/README.md)按症状查找命令、编辑器检查点和验收边界。
-
-<!-- GOLDEN_MAP_SHOWCASE_START -->
-## 公开地图案例
-
-一个匿名真实案例：把自定义道路场景迁入 UE4.27，修复天空与材质，
-并根据实测结果回滚无收益的 LOD 调整。
-
-| 修复前 | 修复后 |
-|---|---|
-| ![较早基线中的异常天空](docs/assets/showcase/before.png) | ![最终晴天修复结果](docs/assets/showcase/after.png) |
-
-[查看迁移步骤、修复方法与性能结果](docs/cases/source-carla-to-ue427.zh-CN.md)。
-这是单个历史案例展示，不提供地图资产；截图不是性能采样画面。
-
-可下载、可复现的小地图 Demo 将另行提供；
-[Golden Map 接入框架](development/shared/plans/golden-map/README.md)
-规定输入、权利、证据与媒体采集要求。现有脚本示例使用模拟文本，不是地图迁移。
-<!-- GOLDEN_MAP_SHOWCASE_END -->
 
 ## 文档导航
 

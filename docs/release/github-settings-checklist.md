@@ -1,8 +1,8 @@
 # GitHub settings and release checklist
 
 Observed on 2026-09-08: repository public, description present, Topics empty,
-Discussions disabled, no tags or Releases. Remote main `7bd4a43` had successful
-CI run 34194806905. Recheck before publishing a newer source revision.
+Discussions disabled, no tags or Releases. Remote main `1f39e62` had successful
+CI run 34201162498 (442 host tests, engine job skipped). Recheck before publication.
 
 The available connector exposes no repository-metadata or Release mutation
 operation, and no authenticated management CLI is configured for this task.
@@ -12,7 +12,7 @@ No remote settings were changed. This is the manual fallback, not a completed se
 
 In the repository About editor, use:
 
-> Codex Plugin + CLI tooling for CARLA custom-map inspection, migration planning, package audits and evidence-driven delivery.
+> Codex Plugin + CLI for CARLA custom-map migration: RoadRunner to Source CARLA, then Package CARLA or UE4.27, with audits and evidence-driven validation.
 
 Suggested Topics (12, lowercase and hyphenated):
 
@@ -29,10 +29,19 @@ allow lowercase letters/numbers/hyphens, at most 50 characters per topic and 20 
 
 ## Social preview
 
-- [ ] Render [social-preview.svg](../assets/social/social-preview.svg) to 1280×640 PNG.
-- [ ] Inspect text and cropping; the diagram contains no official logos or map imagery.
+- [x] Render [social-preview.svg](../assets/social/social-preview.svg) to 1280×640 PNG.
+- [x] Inspect text and cropping; the diagram contains no official logos or map imagery.
 - [ ] Upload the PNG through repository Settings → Social preview.
 - [ ] Verify a public link preview; a committed SVG alone does not set the preview.
+
+The upload-ready PNG is a local handoff artifact, not part of the source release.
+To regenerate it with ImageMagick in `shell-build` from the clone root:
+
+```bash
+preview_dir="$(mktemp -d -t cmtk-preview.XXXXXX)"
+convert -background '#101b2b' docs/assets/social/social-preview.svg "$preview_dir/social-preview.png"
+identify "$preview_dir/social-preview.png"
+```
 
 [GitHub's image requirements](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/customizing-your-repositorys-social-media-preview)
 specify PNG/JPG/GIF below 1 MB; 1280×640 is the recommended display size.
@@ -41,7 +50,7 @@ and allowlist gate; this technical diagram is not real-map evidence.
 
 ## Community
 
-- [ ] Enable Discussions in repository settings if you want a community forum.
+- [ ] Decide whether to enable Discussions; optional and not a release blocker.
 - [ ] Add Q&A, Show and tell, Compatibility and Ideas categories.
 - [ ] Keep private disclosures on the process in [SECURITY.md](../../SECURITY.md);
   verify private vulnerability reporting separately before directing users there.
@@ -56,11 +65,15 @@ and allowlist gate; this technical diagram is not real-map evidence.
 - [ ] Push only the intended branch after authorization and check its new CI result.
 - [ ] Confirm `v0.1.0` does not already exist. Never move an existing public tag.
 - [ ] Create `v0.1.0` on the reviewed commit and mark **Pre-release**.
-- [ ] Use [release notes](v0.1.0-release-notes.md); remove the draft-only status line.
+- [ ] Title: **v0.1.0 — Experimental Public Preview**; mark **Pre-release**.
+- [ ] Use [release notes](v0.1.0-release-notes.md). When pasting into GitHub's Release
+  editor, resolve relative documentation links against the exact tagged source.
 - [ ] Use GitHub's source download or a freshly allowlisted source archive from that
   exact commit. Do not reuse a stale pre-productization archive or upload map assets.
 
 Preparation is not publication. Source gates do not imply a strict RC or L3–L5 acceptance.
+The final handoff supplies the exact candidate SHA and its CI/audit results.
+Do not substitute a later main commit without checking it.
 
 ## Backlog
 
