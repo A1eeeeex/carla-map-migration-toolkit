@@ -1,0 +1,363 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/verified-run.schema.json",
+  "title": "Evidence-backed route verification record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "route",
+    "profile",
+    "toolkit_version",
+    "git_commit",
+    "status",
+    "evidence_level",
+    "verification_owner",
+    "started_at",
+    "completed_at",
+    "environment",
+    "input_hashes",
+    "target_identity",
+    "claims_evaluated",
+    "required_checks",
+    "optional_checks",
+    "stage_results",
+    "repair_summary",
+    "protected_property_diff",
+    "artifacts",
+    "known_limitations",
+    "redaction",
+    "signoff"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.4.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "profile": {"type": "string", "minLength": 1},
+    "toolkit_version": {"type": "string", "minLength": 1},
+    "git_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "status": {"enum": ["PASS", "PASS_WITH_WARNINGS", "FAIL", "INCOMPLETE", "BLOCKED"]},
+    "evidence_level": {"enum": ["L0", "L1", "L2", "L3", "L4", "L5"]},
+    "verification_owner": {"enum": ["maintainer", "community"]},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "environment": {"type": "object"},
+    "input_hashes": {"type": "array", "items": {"$ref": "#/$defs/hash_record"}},
+    "target_identity": {"type": "object"},
+    "claims_evaluated": {"type": "array", "items": {"type": "string", "pattern": "^C-"}},
+    "required_checks": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "#/$defs/check"},
+          {"properties": {"required": {"const": true}}}
+        ]
+      }
+    },
+    "optional_checks": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {"$ref": "#/$defs/check"},
+          {"properties": {"required": {"const": false}}}
+        ]
+      }
+    },
+    "stage_results": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "repair_summary": {"type": "array", "items": {"type": "object"}},
+    "protected_property_diff": {"type": "object"},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifact"}},
+    "known_limitations": {"type": "array", "items": {"type": "string"}},
+    "redaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "report"],
+      "properties": {
+        "status": {"enum": ["PASS", "FAIL", "NOT_RUN"]},
+        "report": {"type": ["string", "null"]}
+      }
+    },
+    "signoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["runner", "reviewer", "date", "acceptance_contract_version", "evidence_sha256"],
+      "properties": {
+        "runner": {"type": ["string", "null"]},
+        "reviewer": {"type": ["string", "null"]},
+        "date": {"type": ["string", "null"], "format": "date"},
+        "acceptance_contract_version": {"type": "string"},
+        "evidence_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  },
+  "$defs": {
+    "rr2src_required_checks": {
+      "allOf": [
+        {"contains": {"properties": {"id": {"const": "input_profile_identified"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "environment_versions_recorded"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "source_target_identified"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "import_committed_saved"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "editor_reopen"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "opendrive_map_match"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "spawn_points_profile"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "topology_junction_core"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "vehicle_spawn_collision"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "required_materials_valid"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "external_refs_resolved"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "source_handoff_complete"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}}
+      ]
+    },
+    "src2pkg_required_checks": {
+      "allOf": [
+        {"contains": {"properties": {"id": {"const": "source_handoff_passed"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "build_target_os_match"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "package_config_valid"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "cook_dependencies_complete"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "package_artifact_hashed"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "archive_safety_passed"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "target_backup_complete"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "package_registry_visible"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "load_world_stable"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "source_visual_parity"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "road_collision_smoke"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "opendrive_spawn_expected"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "dynamic_smoke"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+        {"contains": {"properties": {"id": {"const": "rollback_ready"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}}
+      ]
+    },
+    "hash_record": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["path", "sha256", "kind"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "kind": {"enum": ["stage-result", "check-evidence", "validation-report", "redaction-report", "supporting"]}
+      }
+    },
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "required", "status", "evidence"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "required": {"type": "boolean"},
+        "status": {"enum": ["PASS", "WARN", "FAIL", "NOT_RUN", "NOT_APPLICABLE", "BLOCKED"]},
+        "evidence": {"type": "array", "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "PASS"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "required_checks": {
+            "minItems": 1,
+            "items": {
+              "properties": {
+                "status": {"const": "PASS"},
+                "evidence": {"minItems": 1}
+              }
+            }
+          },
+          "environment": {"minProperties": 1},
+          "input_hashes": {"minItems": 1},
+          "target_identity": {"minProperties": 1},
+          "claims_evaluated": {"minItems": 1},
+          "stage_results": {"minItems": 1},
+          "protected_property_diff": {"minProperties": 1},
+          "artifacts": {"minItems": 1},
+          "redaction": {
+            "properties": {
+              "status": {"const": "PASS"},
+              "report": {"type": "string", "minLength": 1}
+            }
+          },
+          "signoff": {
+            "properties": {
+              "runner": {"type": "string", "minLength": 1},
+              "reviewer": {"type": "string", "minLength": 1},
+              "date": {"type": "string", "format": "date"},
+              "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "PASS_WITH_WARNINGS"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "required_checks": {
+            "minItems": 1,
+            "items": {"properties": {"status": {"enum": ["PASS", "WARN"]}}},
+            "contains": {"properties": {"status": {"const": "WARN"}}, "required": ["status"]}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "INCOMPLETE"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "required_checks": {
+            "contains": {"properties": {"status": {"enum": ["NOT_RUN", "NOT_APPLICABLE"]}}, "required": ["status"]},
+            "not": {"contains": {"properties": {"status": {"enum": ["FAIL", "BLOCKED"]}}, "required": ["status"]}}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "FAIL"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "required_checks": {
+            "contains": {"properties": {"status": {"const": "FAIL"}}, "required": ["status"]}
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "BLOCKED"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "required_checks": {
+            "contains": {"properties": {"status": {"const": "BLOCKED"}}, "required": ["status"]},
+            "not": {"contains": {"properties": {"status": {"const": "FAIL"}}, "required": ["status"]}}
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "route": {"const": "roadrunner-to-source-carla"},
+          "status": {"const": "PASS"}
+        },
+        "required": ["route", "status"]
+      },
+      "then": {
+        "properties": {
+          "evidence_level": {"enum": ["L4", "L5"]},
+          "environment": {
+            "required": ["host_os", "platform", "roadrunner_version", "source_carla_version", "source_ue_version"],
+            "properties": {
+              "host_os": {"type": "string", "minLength": 1},
+              "platform": {"type": "string", "minLength": 1},
+              "roadrunner_version": {"type": "string", "minLength": 1},
+              "source_carla_version": {"type": "string", "minLength": 1},
+              "source_ue_version": {"type": "string", "minLength": 1}
+            }
+          },
+          "target_identity": {
+            "required": ["engine_version", "project_fingerprint", "map_mode"],
+            "properties": {
+              "engine_version": {"type": "string", "minLength": 1},
+              "project_fingerprint": {"type": "string", "minLength": 1},
+              "map_mode": {"enum": ["standard", "large-tiled"]}
+            }
+          },
+          "claims_evaluated": {"contains": {"const": "C-RR-SRC-001"}},
+          "required_checks": {"$ref": "#/$defs/rr2src_required_checks"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "route": {"const": "source-carla-to-package-carla"},
+          "status": {"const": "PASS"}
+        },
+        "required": ["route", "status"]
+      },
+      "then": {
+        "properties": {
+          "evidence_level": {"const": "L5"},
+          "environment": {
+            "required": ["host_os", "platform", "source_carla_version", "source_ue_version", "target_carla_version"],
+            "properties": {
+              "host_os": {"type": "string", "minLength": 1},
+              "platform": {"type": "string", "minLength": 1},
+              "source_carla_version": {"type": "string", "minLength": 1},
+              "source_ue_version": {"type": "string", "minLength": 1},
+              "target_carla_version": {"type": "string", "minLength": 1}
+            }
+          },
+          "target_identity": {
+            "required": ["package_version", "package_fingerprint", "map_mode"],
+            "properties": {
+              "package_version": {"type": "string", "minLength": 1},
+              "package_fingerprint": {"type": "string", "minLength": 1},
+              "map_mode": {"enum": ["standard", "large-tiled"]}
+            }
+          },
+          "claims_evaluated": {"contains": {"const": "C-SRC-PKG-001"}},
+          "required_checks": {"$ref": "#/$defs/src2pkg_required_checks"}
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "route": {"const": "source-carla-to-ue427"},
+          "status": {"const": "PASS"}
+        },
+        "required": ["route", "status"]
+      },
+      "then": {
+        "properties": {
+          "evidence_level": {"const": "L5"},
+          "environment": {
+            "required": ["host_os", "platform", "source_carla_version", "source_ue_version", "target_ue_version"],
+            "properties": {
+              "host_os": {"type": "string", "minLength": 1},
+              "platform": {"type": "string", "minLength": 1},
+              "source_carla_version": {"type": "string", "minLength": 1},
+              "source_ue_version": {"type": "string", "minLength": 1},
+              "target_ue_version": {"type": "string", "minLength": 1}
+            }
+          },
+          "target_identity": {
+            "required": ["engine_version", "project_fingerprint", "map_mode"],
+            "properties": {
+              "engine_version": {"type": "string", "minLength": 1},
+              "project_fingerprint": {"type": "string", "minLength": 1},
+              "map_mode": {"enum": ["standard", "large-tiled"]}
+            }
+          },
+          "claims_evaluated": {"contains": {"const": "C-SRC-UE427-001"}},
+          "required_checks": {
+            "allOf": [
+              {"contains": {"properties": {"id": {"const": "source_asset_inventory_complete"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "dependency_classification_complete"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "unreal_safe_migration"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "target_engine_version_recorded"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "required_assets_present"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "missing_assets_zero"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "required_materials_valid"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "disallowed_carla_refs_zero"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "runtime_objects_have_strategy"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "world_settings_environment_lighting"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "road_collision_smoke"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "target_reopen"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "pie_smoke"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "second_clean_project_cold_copy"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}},
+              {"contains": {"properties": {"id": {"const": "ue427_handoff_complete"}, "status": {"const": "PASS"}}, "required": ["id", "status"]}}
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

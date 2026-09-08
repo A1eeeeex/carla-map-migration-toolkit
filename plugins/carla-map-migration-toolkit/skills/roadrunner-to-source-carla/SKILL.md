@@ -1,6 +1,6 @@
 ---
 name: roadrunner-to-source-carla
-description: Migrate a custom map from a RoadRunner Datasmith, legacy Filmbox, or generic FBX/XODR export into a CARLA source build. Use for import preflight, Dataprep checkpoints, post-import material/reference/alignment/collision/traffic repairs, Source CARLA validation, and downstream handoff. Do not use when the map is already in Source CARLA and the target is Package CARLA or vanilla UE4.27.
+description: Migrate a custom map from a RoadRunner Datasmith, legacy Filmbox, or generic FBX/XODR export into a CARLA source build. Use for import preflight, Dataprep checkpoints, post-import material/reference/alignment/collision/traffic repairs, route-scoped performance profiling and optimization after functional validation, Source CARLA validation, and downstream handoff. Do not use when the target is Package CARLA or vanilla UE4.27, or for unrelated engine tuning.
 ---
 
 # RoadRunner to Source CARLA
@@ -42,12 +42,24 @@ is unknown, remain read-only and report it.
 8. Optimize only after functional baseline; emit a Source handoff only from
    referenced stage artifacts.
 
+## Load on demand
+
+- For import/save failures, alignment, missing assets or resource pressure, read
+  [Source and package operations](../../references/carla-map-operations.md).
+- For a slow imported map, read
+  [map performance operations](../../references/map-performance-operations.md).
+  Reuse comparable existing samples; do not restart the import to compare them.
+
 ## Shared Commands
 
+Run these from the repository clone root after completing `docs/installation.md`.
+If that root or its `.venv` cannot be resolved, remain read-only and report the
+installation blocker instead of guessing another interpreter or script path.
+
 ```bash
-python3 ../../scripts/cmtk.py inspect --route roadrunner-to-source-carla --config <map-workspace.json>
-python3 ../../scripts/cmtk.py plan --route roadrunner-to-source-carla --config <map-workspace.json> --output <artifact-root>/route-plan.json
-python3 ../../scripts/cmtk.py validate --route roadrunner-to-source-carla --config <map-workspace.json> --output <artifact-root>/validation-report.json
+CMTK_EXECUTION_CONTEXT=host-cpython .venv/bin/python plugins/carla-map-migration-toolkit/scripts/cmtk.py inspect --route roadrunner-to-source-carla --config <map-workspace.json>
+CMTK_EXECUTION_CONTEXT=host-cpython .venv/bin/python plugins/carla-map-migration-toolkit/scripts/cmtk.py plan --route roadrunner-to-source-carla --config <map-workspace.json> --output <artifact-root>/route-plan.json
+CMTK_EXECUTION_CONTEXT=host-cpython .venv/bin/python plugins/carla-map-migration-toolkit/scripts/cmtk.py validate --route roadrunner-to-source-carla --config <map-workspace.json> --output <artifact-root>/validation-report.json
 ```
 
 The host core is read-only except for writing artifacts under `artifact_root`.

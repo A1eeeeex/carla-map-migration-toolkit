@@ -8,6 +8,30 @@ from cmtk.core.evidence import check, stage_result
 from cmtk.core.paths import require_within_roots, validate_allowed_roots
 
 from .catalog import ROUTES
+from .source_to_ue427 import classify_workspace_dependencies
+
+
+def _ue427_dependency_check(workspace: dict[str, Any]) -> dict[str, Any]:
+    try:
+        result = classify_workspace_dependencies(workspace)
+    except CmtkError as error:
+        return check(
+            "UE427-DEPENDENCY-CLASSIFICATION",
+            "BLOCKED",
+            error.message,
+            category="dependency",
+            reason_code=error.reason_code,
+        )
+    return check(
+        "UE427-DEPENDENCY-CLASSIFICATION",
+        result["status"],
+        "Every dependency has a complete reviewed action contract."
+        if result["status"] == "PASS"
+        else "Unknown, blocked, duplicate or incomplete dependency actions prevent migration.",
+        category="dependency",
+        reason_code=result["blocked_reasons"][0] if result["blocked_reasons"] else None,
+        evidence=[{"counts": result["counts"], "blocked_reasons": result["blocked_reasons"]}],
+    )
 
 
 def _path_checks(workspace: dict[str, Any]) -> list[dict[str, Any]]:
@@ -332,6 +356,7 @@ def inspect_workspace(workspace: dict[str, Any], route: str) -> dict[str, Any]:
                 reason_code=None if engine_matches else "UE427-ENGINE-VERSION-MISMATCH",
             )
         )
+        checks.append(_ue427_dependency_check(workspace))
 
     has_blocker = any(item["status"] in {"FAIL", "BLOCKED"} for item in checks)
     return stage_result(

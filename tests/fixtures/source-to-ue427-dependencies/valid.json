@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "dependencies": [
+    {
+      "source_object": "/Game/Maps/Anonymous/RoadMesh",
+      "classification": "portable",
+      "target_strategy": "migrate-with-unreal-assettools",
+      "referencers": ["/Game/Maps/Anonymous/AnonymousMap"],
+      "migration_action": "Migrate the reviewed dependency closure through Source Unreal Editor.",
+      "verification": ["Rescan the target Asset Registry."],
+      "rollback": ["Restore objects listed by the backup manifest."],
+      "residual_risk": "Target Editor replay is required."
+    },
+    {
+      "source_object": "/Game/Carla/Blueprints/AnonymousWeather",
+      "classification": "replaceable",
+      "target_strategy": "replace-with-approved-local-environment",
+      "referencers": ["/Game/Maps/Anonymous/AnonymousMap"],
+      "migration_action": "Replace only after referencer review in UE4.27 Editor.",
+      "verification": ["Reopen the map and audit World Settings and references."],
+      "rollback": ["Restore objects listed by the backup manifest."],
+      "residual_risk": "Visual equivalence needs L3 review."
+    }
+  ]
+}

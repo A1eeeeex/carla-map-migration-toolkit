@@ -24,7 +24,7 @@ SRC2UE427.HIL_VALIDATE
 SRC2UE427.HANDOFF
 ```
 
-Classify dependencies as portable, localizable, replaceable, removable,
-editor-only, or blocked. Unknown replacements block. Migration uses Unreal APIs,
+Classify dependencies as `portable`, `localizable`, `replaceable`, `remove`,
+`blocked`, or `unknown`. Unknown and blocked entries stop execution. Migration uses Unreal APIs,
 never OS moves. The primary project is not acceptance; the second clean project
 must pass allowlist, reopen, PIE, material/visual, and collision checks.

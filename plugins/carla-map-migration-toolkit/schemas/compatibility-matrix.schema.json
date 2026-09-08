@@ -6,14 +6,14 @@
   "additionalProperties": false,
   "required": ["schema_version", "generated_at", "entries"],
   "properties": {
-    "schema_version": {"const": "1.0.0"},
+    "schema_version": {"const": "1.1.0"},
     "generated_at": {"type": "string", "format": "date-time"},
     "entries": {
       "type": "array",
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["route", "source_version", "target_version", "engine", "platform", "roadrunner", "map_mode", "toolkit_version", "status", "evidence_bundle", "verified_date", "verifier", "limitations"],
+        "required": ["route", "source_version", "target_version", "engine", "platform", "roadrunner", "map_mode", "toolkit_version", "status", "environment_sha256", "evidence_bundle", "verified_run_id", "evidence_path", "verified_date", "verifier", "limitations"],
         "properties": {
           "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
           "source_version": {"type": ["string", "null"]},
@@ -23,16 +23,19 @@
           "roadrunner": {"type": ["string", "null"]},
           "map_mode": {"enum": ["standard", "large-tiled", null]},
           "toolkit_version": {"type": "string"},
-          "status": {"enum": ["verified", "community-verified", "experimental", "unsupported", "unknown"]},
+          "status": {"enum": ["planned", "implemented", "maintainer-verified", "community-verified", "experimental", "unsupported", "unknown"]},
+          "environment_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
           "evidence_bundle": {"type": ["string", "null"]},
+          "verified_run_id": {"type": ["string", "null"]},
+          "evidence_path": {"type": ["string", "null"]},
           "verified_date": {"type": ["string", "null"], "format": "date"},
           "verifier": {"type": ["string", "null"]},
           "limitations": {"type": "array", "items": {"type": "string"}}
         },
         "allOf": [
           {
-            "if": {"properties": {"status": {"const": "verified"}}, "required": ["status"]},
-            "then": {"properties": {"evidence_bundle": {"type": "string", "minLength": 1}, "verified_date": {"type": "string", "format": "date"}, "verifier": {"type": "string", "minLength": 1}}}
+            "if": {"properties": {"status": {"enum": ["maintainer-verified", "community-verified"]}}, "required": ["status"]},
+            "then": {"properties": {"source_version": {"type": "string", "minLength": 1}, "target_version": {"type": "string", "minLength": 1}, "engine": {"type": "string", "minLength": 1}, "platform": {"type": "string", "minLength": 1}, "map_mode": {"enum": ["standard", "large-tiled"]}, "toolkit_version": {"type": "string", "minLength": 1}, "environment_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}, "evidence_bundle": {"type": "string", "minLength": 1}, "verified_run_id": {"type": "string", "minLength": 1}, "evidence_path": {"type": "string", "minLength": 1}, "verified_date": {"type": "string", "format": "date"}, "verifier": {"type": "string", "minLength": 1}}}
           }
         ]
       }

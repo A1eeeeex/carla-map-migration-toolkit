@@ -36,6 +36,7 @@ def inspect_archive(
 ) -> dict[str, Any]:
     archive_path = Path(path)
     names: list[str] = []
+    files: list[dict[str, Any]] = []
     findings: list[dict[str, str]] = []
     expanded_bytes = 0
     try:
@@ -43,6 +44,8 @@ def inspect_archive(
             with tarfile.open(archive_path, "r:*") as archive:
                 for member in archive.getmembers():
                     names.append(member.name)
+                    if member.isfile():
+                        files.append({"path": member.name, "bytes": member.size})
                     expanded_bytes += max(member.size, 0)
                     if reason := _unsafe_name_reason(member.name):
                         findings.append(_finding(reason, member.name, "Unsafe archive member path."))
@@ -72,6 +75,12 @@ def inspect_archive(
                                 "PKG-ARCHIVE-UNSAFE-LINK", member.filename, "Links are not accepted in map archives."
                             )
                         )
+                    elif mode not in {0, stat.S_IFREG, stat.S_IFDIR}:
+                        findings.append(
+                            _finding("PKG-ARCHIVE-UNSAFE-SPECIAL", member.filename, "Special zip member.")
+                        )
+                    elif mode != stat.S_IFDIR and not member.is_dir():
+                        files.append({"path": member.filename, "bytes": member.file_size})
         else:
             raise CmtkError("PKG-ARCHIVE-INVALID", "Unsupported or invalid archive.", status="FAIL")
     except (OSError, tarfile.TarError, zipfile.BadZipFile) as error:
@@ -95,7 +104,7 @@ def inspect_archive(
 
     missing: list[str] = []
     for pattern in required_patterns or []:
-        if not any(fnmatch.fnmatch(name, pattern) for name in names):
+        if not any(fnmatch.fnmatch(item["path"], pattern) for item in files):
             missing.append(pattern)
             findings.append(_finding("PKG-ARCHIVE-MEMBER-MISSING", pattern, "Required member pattern was not found."))
 
@@ -114,5 +123,6 @@ def inspect_archive(
         "missing_patterns": missing,
         "findings": findings,
         "members": names,
+        "files": files,
         "extracted": False,
     }

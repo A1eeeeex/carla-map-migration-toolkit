@@ -1,0 +1,167 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/check-evidence.schema.json",
+  "title": "Structured evidence for one route acceptance check",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "route", "stage", "check_id", "status", "evidence_type", "summary", "observations"],
+  "properties": {
+    "schema_version": {"const": "1.1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "stage": {"type": "string", "pattern": "^(RR2SRC|SRC2PKG|SRC2UE427)\\."},
+    "check_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PASS", "FAIL"]},
+    "evidence_type": {"enum": ["deterministic-output", "editor-audit", "runtime-measurement", "manual-review", "portability-replay"]},
+    "summary": {"type": "string", "minLength": 1},
+    "observations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/observation"}
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "PASS"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "observations": {
+            "contains": {
+              "properties": {"name": {"const": "acceptance"}, "value": {"const": true}},
+              "required": ["name", "value"]
+            },
+            "minContains": 1,
+            "maxContains": 1,
+            "not": {
+              "contains": {
+                "properties": {"name": {"const": "acceptance"}, "value": {"const": false}},
+                "required": ["name", "value"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"status": {"const": "FAIL"}}, "required": ["status"]},
+      "then": {
+        "properties": {
+          "observations": {
+            "contains": {
+              "properties": {"name": {"const": "acceptance"}, "value": {"const": false}},
+              "required": ["name", "value"]
+            },
+            "minContains": 1,
+            "maxContains": 1,
+            "not": {
+              "contains": {
+                "properties": {"name": {"const": "acceptance"}, "value": {"const": true}},
+                "required": ["name", "value"]
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "check_id": {
+            "enum": [
+              "input_profile_identified",
+              "environment_versions_recorded",
+              "source_target_identified",
+              "source_handoff_complete",
+              "source_handoff_passed",
+              "build_target_os_match",
+              "package_config_valid",
+              "cook_dependencies_complete",
+              "package_artifact_hashed",
+              "archive_safety_passed",
+              "target_backup_complete",
+              "rollback_ready",
+              "source_asset_inventory_complete",
+              "dependency_classification_complete",
+              "ue427_handoff_complete"
+            ]
+          }
+        },
+        "required": ["check_id"]
+      },
+      "then": {"properties": {"evidence_type": {"const": "deterministic-output"}}}
+    },
+    {
+      "if": {
+        "properties": {
+          "check_id": {
+            "enum": [
+              "import_committed_saved",
+              "editor_reopen",
+              "required_materials_valid",
+              "external_refs_resolved",
+              "unreal_safe_migration",
+              "target_engine_version_recorded",
+              "required_assets_present",
+              "missing_assets_zero",
+              "disallowed_carla_refs_zero",
+              "runtime_objects_have_strategy",
+              "world_settings_environment_lighting",
+              "target_reopen"
+            ]
+          }
+        },
+        "required": ["check_id"]
+      },
+      "then": {"properties": {"evidence_type": {"const": "editor-audit"}}}
+    },
+    {
+      "if": {
+        "properties": {
+          "check_id": {
+            "enum": [
+              "opendrive_map_match",
+              "spawn_points_profile",
+              "topology_junction_core",
+              "vehicle_spawn_collision",
+              "package_registry_visible",
+              "load_world_stable",
+              "source_visual_parity",
+              "road_collision_smoke",
+              "opendrive_spawn_expected",
+              "dynamic_smoke",
+              "pie_smoke"
+            ]
+          }
+        },
+        "required": ["check_id"]
+      },
+      "then": {"properties": {"evidence_type": {"const": "runtime-measurement"}}}
+    },
+    {
+      "if": {
+        "properties": {"check_id": {"const": "second_clean_project_cold_copy"}},
+        "required": ["check_id"]
+      },
+      "then": {"properties": {"evidence_type": {"const": "portability-replay"}}}
+    }
+  ],
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value", "source"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value": {"type": ["string", "number", "boolean"], "minLength": 1},
+        "unit": {"type": ["string", "null"]},
+        "source": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {
+          "if": {"properties": {"name": {"const": "acceptance"}}, "required": ["name"]},
+          "then": {"properties": {"value": {"type": "boolean"}}}
+        }
+      ]
+    }
+  }
+}

@@ -4,6 +4,7 @@ EXPECTED = {
     "source-carla-valid",
     "source-carla-map-missing",
     "source-carla-xodr-mismatch",
+    "source-to-ue427-dependencies",
     "package-carla-valid",
     "package-json-invalid",
     "archive-path-traversal",

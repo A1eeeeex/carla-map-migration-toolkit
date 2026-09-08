@@ -4,6 +4,8 @@ import math
 import re
 from typing import Any
 
+from .metrics import compare_metrics
+
 PROTECTED_REASON_CODES = {
     "lod0_sha256": "PERF-LOD0-CHANGED",
     "material_slots_sha256": "PERF-MATERIAL-SLOT-CHANGED",
@@ -157,6 +159,17 @@ def compare_snapshots(baseline: dict[str, Any], candidate: dict[str, Any]) -> di
         reason_codes.append("PERF-METRIC-MISSING")
 
     hard_failure = any(code not in {"PERF-VSYNC-ENABLED", "PERF-FPS-CAPPED"} for code in reason_codes)
+    secondary = compare_metrics(baseline_metrics, candidate_metrics)
+    if secondary["invalid_metrics"]:
+        _append_once(reason_codes, "PERF-INPUT-INVALID")
+        hard_failure = True
+    if secondary["missing_metrics"]:
+        _append_once(reason_codes, "PERF-METRIC-MISSING")
+    secondary_regressions = [
+        name for name in secondary["regressions"] if name not in {"median_frame_ms", "p95_frame_ms"}
+    ]
+    if secondary_regressions:
+        reason_codes.append("PERF-SECONDARY-REGRESSION")
     status = "FAIL" if hard_failure else ("WARN" if reason_codes else "PASS")
     return {
         "schema_version": "1.0.0",
@@ -164,4 +177,5 @@ def compare_snapshots(baseline: dict[str, Any], candidate: dict[str, Any]) -> di
         "reason_codes": reason_codes,
         "differences": differences,
         "median_frame_time_improvement_percent": improvement,
+        "metric_comparison": secondary,
     }

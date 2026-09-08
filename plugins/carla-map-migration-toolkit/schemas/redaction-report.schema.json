@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/redaction-report.schema.json",
+  "title": "Publication redaction audit",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "run_id", "status", "scanner", "sensitive_terms_count", "sensitive_terms_sha256", "scanned_artifacts", "findings"],
+  "properties": {
+    "schema_version": {"const": "1.1.0"},
+    "run_id": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PASS", "FAIL"]},
+    "scanner": {"type": "string", "minLength": 1},
+    "sensitive_terms_count": {"type": "integer", "minimum": 1},
+    "sensitive_terms_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "scanned_artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/scanned_artifact"}
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "class"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "class": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "scanned_artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "PASS"}}, "required": ["status"]},
+      "then": {"properties": {"findings": {"maxItems": 0}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "FAIL"}}, "required": ["status"]},
+      "then": {"properties": {"findings": {"minItems": 1}}}
+    }
+  ]
+}

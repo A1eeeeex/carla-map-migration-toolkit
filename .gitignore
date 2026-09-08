@@ -1,6 +1,7 @@
 __pycache__/
 .pytest_cache/
 .ruff_cache/
+.venv/
 *.py[cod]
 
 # Local handoff, discovery, and private development inputs are never pushed.

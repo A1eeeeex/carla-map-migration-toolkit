@@ -7,5 +7,10 @@ logic issue.
 
 Treat migration inputs and package archives as untrusted. Run inspect/plan first,
 keep allowed roots narrow, inspect archives before extraction, and use Unreal
-APIs for assets. This pre-release tree has no published security contact; report
-privately to the repository owner once ownership is established.
+APIs for assets.
+
+For security issues, use GitHub's
+[private vulnerability reporting form](https://github.com/A1eeeeex/carla-map-migration-toolkit/security/advisories/new).
+Do not open a public issue containing sensitive details. If the private form is
+not yet available, open only a minimal public issue asking `@A1eeeeex` to
+establish a private channel.

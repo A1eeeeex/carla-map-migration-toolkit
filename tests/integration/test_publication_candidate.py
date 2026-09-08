@@ -7,6 +7,11 @@ from pathlib import Path
 
 from conftest import REPO_ROOT
 
+from development.shared.release_tools.publication_audit import (
+    FORBIDDEN_PUBLIC_SUFFIXES,
+    _contains_binary_content,
+)
+
 _MANIFEST_PATH = REPO_ROOT / "PUBLICATION_ALLOWLIST.json"
 _LOCAL_PATH = re.compile(r"/(?:" + "home|Users|root|mnt|media|opt|srv|tmp|var" + r")/[A-Za-z0-9_.-]+/")
 _SECRET_ASSIGNMENT = re.compile(r"(?i)\b(?:token|api[_-]?key|password|secret)\s*[:=]\s*[^\s,;]+")
@@ -53,7 +58,17 @@ def test_publication_candidate_matches_explicit_per_file_allowlist():
 def test_publication_candidate_has_no_forbidden_binary_or_asset_suffix():
     manifest = _load_manifest()
     forbidden = {suffix.lower() for suffix in manifest["forbidden_suffixes"]}
+    assert forbidden == FORBIDDEN_PUBLIC_SUFFIXES
     offenders = [path for path in _candidate_files(manifest) if Path(path).suffix.lower() in forbidden]
+    assert offenders == []
+
+
+def test_publication_candidate_contains_only_utf8_text_files():
+    offenders = [
+        relative_path
+        for relative_path in sorted(_candidate_files(_load_manifest()))
+        if _contains_binary_content((REPO_ROOT / relative_path).read_bytes())
+    ]
     assert offenders == []
 
 

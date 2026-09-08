@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0.0",
+  "map_id": "cmtk-golden-map-lite-001",
+  "public_tier": "public-golden-map-lite",
+  "status": "planned",
+  "rights": {
+    "status": "REVIEW_REQUIRED",
+    "owner": null,
+    "license": null,
+    "third_party_content": []
+  },
+  "map_mode": "standard",
+  "features": {
+    "road_length_m_range": [600, 1200],
+    "junctions": 1,
+    "spawn_points_range": [8, 20],
+    "slope_change": true,
+    "traffic_light": "optional",
+    "materials_min": 2,
+    "environment_lighting": true,
+    "road_collision": true
+  },
+  "routes": [
+    "roadrunner-to-source-carla",
+    "source-carla-to-package-carla",
+    "source-carla-to-ue427"
+  ],
+  "failure_variants": [
+    {
+      "id": "GM-F01",
+      "fault": "map-xodr-name-mismatch",
+      "reason_code": "RR-XODR-NAME-MISMATCH",
+      "expected_status": "BLOCKED"
+    },
+    {
+      "id": "GM-F02",
+      "fault": "missing-material-parent",
+      "reason_code": "UE427-MATERIAL-PARENT-MISSING",
+      "expected_status": "BLOCKED"
+    },
+    {
+      "id": "GM-F03",
+      "fault": "missing-texture",
+      "reason_code": "UE427-TEXTURE-MISSING",
+      "expected_status": "BLOCKED"
+    },
+    {
+      "id": "GM-F04",
+      "fault": "external-carla-reference",
+      "reason_code": "UE427-CARLA-REFERENCE-REMAINS",
+      "expected_status": "BLOCKED"
+    },
+    {
+      "id": "GM-F05",
+      "fault": "collision-disabled",
+      "reason_code": "UE427-COLLISION-FAILED",
+      "expected_status": "BLOCKED"
+    },
+    {
+      "id": "GM-F06",
+      "fault": "world-settings-carla-dependent",
+      "reason_code": "UE427-WORLD-SETTINGS-INVALID",
+      "expected_status": "BLOCKED"
+    },
+    {
+      "id": "GM-F07",
+      "fault": "package-map-not-cooked",
+      "reason_code": "PKG-MAP-NOT-COOKED",
+      "expected_status": "BLOCKED"
+    },
+    {
+      "id": "GM-F08",
+      "fault": "archive-unsafe-member",
+      "reason_code": "PKG-ARCHIVE-UNSAFE-TRAVERSAL",
+      "expected_status": "BLOCKED"
+    }
+  ],
+  "public_files": [
+    "demo/golden-map/README.md",
+    "demo/golden-map/manifest.json"
+  ],
+  "private_files": [],
+  "generation_steps": [
+    "Confirm ownership and select a repository-compatible license.",
+    "Create only original or explicitly redistributable source material.",
+    "Generate each failure variant from the clean candidate with one primary fault.",
+    "Run route-specific L0-L5 evidence without committing Unreal binaries."
+  ],
+  "verified_environments": []
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "anonymous-redaction-example",
+  "status": "PASS",
+  "scanner": "anonymous-redaction-scanner",
+  "sensitive_terms_count": 1,
+  "sensitive_terms_sha256": "adc0e73cf66d81a80f03c98800e2088edaefaa8ad64cd28407319693567ba209",
+  "scanned_artifacts": [
+    {
+      "path": "evidence/verified/anonymous-run/stage-result.json",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "findings": []
+}

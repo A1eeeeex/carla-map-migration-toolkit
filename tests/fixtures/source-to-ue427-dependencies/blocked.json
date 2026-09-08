@@ -1,0 +1,15 @@
+{
+  "schema_version": "1.0.0",
+  "dependencies": [
+    {
+      "source_object": "/Game/Unknown/RuntimeOnlyObject",
+      "classification": "unknown",
+      "target_strategy": null,
+      "referencers": ["/Game/Maps/Anonymous/AnonymousMap"],
+      "migration_action": "Do not migrate until the class and replacement are identified.",
+      "verification": ["Repeat Source Asset Registry discovery."],
+      "rollback": ["No mutation is allowed for an unknown dependency."],
+      "residual_risk": "Runtime-only behavior is unknown."
+    }
+  ]
+}

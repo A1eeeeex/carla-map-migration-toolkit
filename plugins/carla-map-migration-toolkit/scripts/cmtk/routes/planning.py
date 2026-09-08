@@ -4,18 +4,20 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from cmtk.core.hashing import sha256_file, sha256_json
+from cmtk.core.errors import CmtkError
+from cmtk.core.hashing import sha256_bytes, sha256_json
 from cmtk.core.paths import require_within_roots
-from cmtk.core.plans import seal_plan
+from cmtk.core.plans import ROUTE_PLAN_SCHEMA_VERSION, seal_plan
 
 from .catalog import ROUTES, STEP_CATALOG
+from .source_to_ue427 import classify_dependency_manifest_bytes
 
 
 def _timestamp() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def _input_fingerprints(workspace: dict[str, Any], route: str) -> list[dict[str, Any]]:
+def _input_snapshots(workspace: dict[str, Any], route: str) -> tuple[list[dict[str, Any]], dict[Path, bytes]]:
     allowed_roots = workspace["execution"]["allowed_roots"]
     candidates: dict[Path, str] = {}
     if route == "roadrunner-to-source-carla":
@@ -50,16 +52,27 @@ def _input_fingerprints(workspace: dict[str, Any], route: str) -> list[dict[str,
         path = require_within_roots(xodr, allowed_roots)
         if path.is_file():
             candidates[path] = "opendrive"
-    return [
+    snapshots: dict[Path, bytes] = {}
+    for path in sorted(candidates, key=str):
+        try:
+            snapshots[path] = path.read_bytes()
+        except OSError as error:
+            raise CmtkError(
+                "PATH-TARGET-NOT-FOUND",
+                "Unable to capture a stable route input snapshot.",
+                details={"path": str(path), "error": str(error)},
+            ) from error
+    fingerprints = [
         {
             "kind": kind,
             "name": path.name,
             "path": str(path),
-            "size_bytes": path.stat().st_size,
-            "sha256": sha256_file(path),
+            "size_bytes": len(snapshots[path]),
+            "sha256": sha256_bytes(snapshots[path]),
         }
         for path, kind in sorted(candidates.items(), key=lambda item: str(item[0]))
     ]
+    return fingerprints, snapshots
 
 
 def _environment_fingerprints(workspace: dict[str, Any], route: str) -> list[dict[str, Any]]:
@@ -138,9 +151,13 @@ def _step_write_paths(workspace: dict[str, Any], route: str, suffix: str) -> lis
     ue427 = workspace["ue427"]
     if suffix == "COLD_COPY":
         return [_resolved_path(workspace, str(Path(ue427["cold_copy_uproject"]).parent))]
+    if suffix == "MIGRATE_ASSETS":
+        return [
+            _resolved_path(workspace, workspace["source_carla"]["root"]),
+            _resolved_path(workspace, str(Path(ue427["uproject"]).parent)),
+        ]
     if suffix in {
         "CREATE_TARGET",
-        "MIGRATE_ASSETS",
         "REPAIR_MATERIALS",
         "REPLACE_CARLA",
         "REPAIR_WORLD",
@@ -152,27 +169,66 @@ def _step_write_paths(workspace: dict[str, Any], route: str, suffix: str) -> lis
     return []
 
 
+def route_step_path_contract(workspace: dict[str, Any], route: str) -> dict[str, dict[str, Any]]:
+    prefix = ROUTES[route]["prefix"]
+    read_paths = _route_read_paths(workspace, route)
+    backup_root = _resolved_path(workspace, workspace["execution"]["backup_root"])
+    contract: dict[str, dict[str, Any]] = {}
+    for suffix, _step_type, _context, _risk in STEP_CATALOG[route]:
+        write_paths = _step_write_paths(workspace, route, suffix)
+        backup_required = bool(write_paths and suffix != "HANDOFF")
+        contract[f"{prefix}.{suffix}"] = {
+            "read_paths": read_paths,
+            "write_paths": write_paths,
+            "backup": {} if not backup_required else {"root": backup_root, "required": True},
+        }
+    return contract
+
+
 def build_plan(workspace: dict[str, Any], route: str, inspection: dict[str, Any]) -> dict[str, Any]:
     prefix = ROUTES[route]["prefix"]
     execution = workspace["execution"]
-    read_paths = _route_read_paths(workspace, route)
+    path_contract = route_step_path_contract(workspace, route)
+    input_fingerprints, input_snapshots = _input_snapshots(workspace, route)
+    dependency_result = None
+    if route == "source-carla-to-ue427":
+        dependency_path = require_within_roots(
+            workspace["input"]["dependency_manifest_path"],
+            [require_within_roots(workspace["input"]["root"], execution["allowed_roots"])],
+        )
+        dependency_content = input_snapshots.get(dependency_path)
+        if dependency_content is None:
+            raise CmtkError(
+                "UE427-DEPENDENCY-MANIFEST-INVALID",
+                "Dependency manifest was not captured in the route input snapshot.",
+                details={"path": str(dependency_path)},
+            )
+        dependency_result = classify_dependency_manifest_bytes(dependency_content, dependency_path)
+
     steps = []
     for suffix, step_type, context, risk in STEP_CATALOG[route]:
-        writes = _step_write_paths(workspace, route, suffix)
+        step_id = f"{prefix}.{suffix}"
+        step_paths = path_contract[step_id]
+        writes = step_paths["write_paths"]
         backup_required = bool(writes and suffix != "HANDOFF")
+        assets: list[Any] = []
+        expected_changes = [] if not writes else ["Changes must be supplied by a reviewed adapter request."]
+        if dependency_result is not None and suffix == "CLASSIFY_DEPS":
+            assets = dependency_result["dependencies"]
+            expected_changes = ["No asset changes; review the complete dependency action contract."]
+            if dependency_result["blocked_reasons"]:
+                step_type = "BLOCKED"
         steps.append(
             {
-                "step_id": f"{prefix}.{suffix}",
+                "step_id": step_id,
                 "type": step_type,
                 "execution_context": context,
-                "read_paths": read_paths,
+                "read_paths": step_paths["read_paths"],
                 "write_paths": writes,
-                "assets": [],
-                "expected_changes": [] if not writes else ["Changes must be supplied by a reviewed adapter request."],
+                "assets": assets,
+                "expected_changes": expected_changes,
                 "risk": risk,
-                "backup": {}
-                if not backup_required
-                else {"root": _resolved_path(workspace, execution["backup_root"]), "required": True},
+                "backup": step_paths["backup"],
                 "verify": [f"verify {prefix}.{suffix}"],
                 "rollback": [] if not backup_required else ["restore only objects listed by the backup manifest"],
             }
@@ -180,14 +236,17 @@ def build_plan(workspace: dict[str, Any], route: str, inspection: dict[str, Any]
     blocked = [
         item.get("reason_code", item["id"]) for item in inspection["checks"] if item["status"] in {"FAIL", "BLOCKED"}
     ]
+    if dependency_result is not None:
+        blocked.extend(dependency_result["blocked_reasons"])
+    blocked = sorted(set(blocked))
     created_at = _timestamp()
     plan = {
-        "schema_version": "1.0.0",
+        "schema_version": ROUTE_PLAN_SCHEMA_VERSION,
         "plan_id": f"plan-{workspace['workspace_id']}-{prefix.lower()}",
         "route": route,
         "created_at": created_at,
         "workspace_sha256": sha256_json(workspace),
-        "input_fingerprints": _input_fingerprints(workspace, route),
+        "input_fingerprints": input_fingerprints,
         "environment_fingerprints": _environment_fingerprints(workspace, route),
         "steps": steps,
         "blocked_reasons": blocked,

@@ -9,6 +9,9 @@
 | `L4_RUNTIME` | Real Package CARLA, CARLA API, or PIE execution |
 | `L5_PORTABILITY` | New environment or second clean-project cold-copy |
 
-Statuses are exactly `PASS`, `WARN`, `FAIL`, `NOT_RUN`, `NOT_APPLICABLE`, and
-`BLOCKED`. A lower evidence level never proves a higher one. `NOT_RUN` is not a
-passing status. UE4.27 route acceptance requires L5 cold-copy evidence.
+Stage/check statuses are exactly `PASS`, `WARN`, `FAIL`, `NOT_RUN`,
+`NOT_APPLICABLE`, and `BLOCKED`. Verified Run roll-ups use `PASS`,
+`PASS_WITH_WARNINGS`, `FAIL`, `INCOMPLETE`, and `BLOCKED`. A lower evidence
+level never proves a higher one. `community-verified` is a support maturity
+status, not another proof level or a bypass of L5. `NOT_RUN` is not a passing
+status. UE4.27 route acceptance requires L5 cold-copy evidence.

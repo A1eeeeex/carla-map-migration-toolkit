@@ -1,7 +1,15 @@
+import hashlib
 import json
 
 import yaml
-from cmtk.routes.catalog import STEP_CATALOG
+from cmtk.routes.catalog import (
+    OPTIONAL_STAGE_CHECK_EVIDENCE_TYPES,
+    OPTIONAL_STAGE_CHECK_STAGES,
+    REQUIRED_CHECK_EVIDENCE_TYPES,
+    REQUIRED_CHECK_STAGES,
+    ROUTES,
+    STEP_CATALOG,
+)
 from conftest import PLUGIN_ROOT, REPO_ROOT
 
 SKILLS = {
@@ -24,6 +32,27 @@ def test_manifest_and_marketplace_identifiers_match():
     assert marketplace["plugins"][0]["source"]["path"] == "./plugins/carla-map-migration-toolkit"
 
 
+def test_public_release_metadata_has_an_accountable_identity_and_license():
+    citation = yaml.safe_load((REPO_ROOT / "CITATION.cff").read_text(encoding="utf-8"))
+    manifest = json.loads((PLUGIN_ROOT / ".codex-plugin" / "plugin.json").read_text(encoding="utf-8"))
+    license_bytes = (REPO_ROOT / "LICENSE").read_bytes()
+    notice = (REPO_ROOT / "NOTICE.md").read_text(encoding="utf-8")
+    security = (REPO_ROOT / "SECURITY.md").read_text(encoding="utf-8")
+
+    assert len(citation["authors"]) == 1
+    author = citation["authors"][0]
+    assert set(author) == {"family-names", "given-names"}
+    assert all(author.values())
+    assert citation["license"] == "Apache-2.0"
+    assert manifest["license"] == "Apache-2.0"
+    expected_license_sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    assert hashlib.sha256(license_bytes).hexdigest() == expected_license_sha256
+    assert f'Copyright 2026 {author["given-names"]} {author["family-names"]}' in notice
+    assert manifest["author"] == {"name": "A1eeeeex", "url": "https://github.com/A1eeeeex"}
+    assert manifest["interface"]["developerName"] == "A1eeeeex"
+    assert "private vulnerability reporting" in security.casefold()
+
+
 def test_skills_have_discriminating_descriptions_and_ui_metadata():
     for name in SKILLS:
         skill_dir = PLUGIN_ROOT / "skills" / name
@@ -32,7 +61,8 @@ def test_skills_have_discriminating_descriptions_and_ui_metadata():
         assert "Use This Skill When" in text
         assert "Do Not Use This Skill When" in text
         metadata = yaml.safe_load((skill_dir / "agents" / "openai.yaml").read_text(encoding="utf-8"))
-        assert f"${name}" in metadata["interface"]["default_prompt"]
+        installed_skill_name = f"$carla-map-migration-toolkit:{name}"
+        assert installed_skill_name in metadata["interface"]["default_prompt"]
 
 
 def test_route_stage_catalog_contains_required_contract_stages():
@@ -89,3 +119,42 @@ def test_route_stage_catalog_contains_required_contract_stages():
     for route, required in expected.items():
         actual = {step[0] for step in STEP_CATALOG[route]}
         assert actual == required
+
+
+def test_required_check_stage_contracts_only_reference_catalog_stages():
+    assert set(REQUIRED_CHECK_STAGES) == set(STEP_CATALOG)
+    for route, checks in REQUIRED_CHECK_STAGES.items():
+        prefix = ROUTES[route]["prefix"]
+        known_stages = {f"{prefix}.{step[0]}" for step in STEP_CATALOG[route]}
+        assert checks
+        assert all(stages and set(stages) <= known_stages for stages in checks.values())
+
+
+def test_required_check_evidence_types_match_stage_execution_contexts():
+    unreal_contexts = {"source-unreal-python", "ue427-unreal-python"}
+    stage_contexts = {
+        route: {
+            f"{ROUTES[route]['prefix']}.{suffix}": context
+            for suffix, _step_type, context, _risk in steps
+        }
+        for route, steps in STEP_CATALOG.items()
+    }
+    assert set(REQUIRED_CHECK_EVIDENCE_TYPES) == set(REQUIRED_CHECK_STAGES)
+    for route, checks in REQUIRED_CHECK_STAGES.items():
+        assert set(REQUIRED_CHECK_EVIDENCE_TYPES[route]) == set(checks)
+        for check_id, stages in checks.items():
+            evidence_type = REQUIRED_CHECK_EVIDENCE_TYPES[route][check_id]
+            if evidence_type == "editor-audit":
+                assert all(stage_contexts[route][stage] in unreal_contexts for stage in stages), (
+                    route,
+                    check_id,
+                    stages,
+                )
+
+    assert set(OPTIONAL_STAGE_CHECK_STAGES) == set(REQUIRED_CHECK_STAGES)
+    assert set(OPTIONAL_STAGE_CHECK_EVIDENCE_TYPES) == set(REQUIRED_CHECK_STAGES)
+    for route, checks in OPTIONAL_STAGE_CHECK_STAGES.items():
+        assert set(OPTIONAL_STAGE_CHECK_EVIDENCE_TYPES[route]) == set(checks)
+        for check_id, stages in checks.items():
+            assert OPTIONAL_STAGE_CHECK_EVIDENCE_TYPES[route][check_id] == "editor-audit"
+            assert all(stage_contexts[route][stage] in unreal_contexts for stage in stages)

@@ -1,6 +1,6 @@
 interface:
   display_name: "Source CARLA to UE4.27"
   short_description: "Detach a CARLA map into vanilla UE4.27"
-  default_prompt: "Use $source-carla-to-ue427 to inspect and plan a clean UE4.27 map migration."
+  default_prompt: "Use $carla-map-migration-toolkit:source-carla-to-ue427 to inspect and plan a clean UE4.27 map migration."
 policy:
   allow_implicit_invocation: true

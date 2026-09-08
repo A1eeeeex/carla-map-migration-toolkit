@@ -68,8 +68,16 @@
     {"code":"PKG-GROUND-COLLISION-FAILED","severity":"critical","repair":"review_required","routes":["source-carla-to-package-carla"]},
     {"code":"PKG-RUNTIME-UNSTABLE","severity":"critical","repair":"review_required","routes":["source-carla-to-package-carla"]},
     {"code":"UE427-TARGET-PROFILE-UNKNOWN","severity":"error","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-SOURCE-MAP-NOT-FOUND","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-TARGET-VERSION-UNKNOWN","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-ASSET-API-UNAVAILABLE","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
     {"code":"UE427-ENGINE-VERSION-MISMATCH","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
     {"code":"UE427-TARGET-PROJECT-INVALID","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-DEPENDENCY-MANIFEST-INVALID","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-DEPENDENCY-MANIFEST-EMPTY","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-DEPENDENCY-UNKNOWN","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-DEPENDENCY-BLOCKED","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-BLOCKED-RUNTIME-CLASS","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-ASSET-MIGRATION-FAILED","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-CARLA-REFERENCE-REMAINS","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-PLUGIN-REFERENCE-REMAINS","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
@@ -80,12 +88,16 @@
     {"code":"UE427-CLASS-UNRESOLVED","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-REPLACEMENT-UNDEFINED","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
     {"code":"UE427-WORLD-SETTINGS-INVALID","severity":"error","repair":"review_required","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-WORLD-SETTINGS-CARLA-DEPENDENT","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-ENVIRONMENT-MISSING","severity":"error","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-GAMEMODE-INVALID","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-COLLISION-FAILED","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-ROAD-COLLISION-FAILED","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-REDIRECTOR-REMAINS","severity":"error","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-PIE-FAILED","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-TARGET-OPEN-FAILED","severity":"critical","repair":"review_required","routes":["source-carla-to-ue427"]},
     {"code":"UE427-COLD-COPY-FAILED","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
+    {"code":"UE427-COLD-COPY-PASS","severity":"info","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
     {"code":"UE427-HIL-INPUT-FAILED","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-ue427"]},
     {"code":"PERF-BASELINE-MISSING","severity":"critical","repair":"no_auto_repair","routes":["*"]},
     {"code":"PERF-CONDITIONS-NOT-COMPARABLE","severity":"critical","repair":"no_auto_repair","routes":["*"]},
@@ -110,6 +122,8 @@
     {"code":"ROUTE-CONFLICT","severity":"critical","repair":"no_auto_repair","routes":["*"]},
     {"code":"SCHEMA-VERSION-UNSUPPORTED","severity":"critical","repair":"no_auto_repair","routes":["*"]},
     {"code":"STATUS-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]},
+    {"code":"EVIDENCE-REFERENCE-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]},
+    {"code":"EVIDENCE-RECORD-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]},
     {"code":"COMMAND-UNKNOWN","severity":"critical","repair":"no_auto_repair","routes":["*"]},
     {"code":"PATH-TARGET-NOT-FOUND","severity":"error","repair":"no_auto_repair","routes":["*"]},
     {"code":"MAP-MODE-UNKNOWN","severity":"error","repair":"no_auto_repair","routes":["roadrunner-to-source-carla"]},
@@ -129,5 +143,17 @@
     ,{"code":"ARCHIVE-ALLOWED-ROOT-REQUIRED","severity":"critical","repair":"no_auto_repair","routes":["source-carla-to-package-carla"]}
     ,{"code":"VALIDATION-INPUT-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]}
     ,{"code":"HANDOFF-EVIDENCE-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-RECEIPT-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-API-UNAVAILABLE","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-ENVIRONMENT-MISMATCH","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-EVIDENCE-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-ROLLBACK-INCOMPLETE","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-SENSITIVE-TERMS-REQUIRED","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-SENSITIVE-DATA-DETECTED","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"ADAPTER-PUBLIC-PATH-INVALID","severity":"critical","repair":"no_auto_repair","routes":["*"]}
+    ,{"code":"DELIVERY-INPUT-INVALID","severity":"error","repair":"no_auto_repair","routes":["source-carla-to-package-carla","source-carla-to-ue427"]}
+    ,{"code":"DELIVERY-CONTENT-INCOMPLETE","severity":"error","repair":"review_required","routes":["source-carla-to-package-carla","source-carla-to-ue427"]}
+    ,{"code":"DELIVERY-ASSET-CATEGORIES-UNCONFIRMED","severity":"warning","repair":"checkpoint","routes":["source-carla-to-package-carla"]}
+    ,{"code":"PERF-SECONDARY-REGRESSION","severity":"warning","repair":"review_required","routes":["*"]}
   ]
 }

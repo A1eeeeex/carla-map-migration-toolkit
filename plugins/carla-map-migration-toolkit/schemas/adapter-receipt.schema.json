@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/carla-map-migration-toolkit/adapter-receipt.schema.json",
+  "title": "Private execution-context receipt consumed by the evidence adapter",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "route",
+    "stage",
+    "execution_context",
+    "plan_sha256",
+    "recorded_at",
+    "environment",
+    "operation",
+    "inputs",
+    "actions",
+    "changes",
+    "checks",
+    "metrics",
+    "artifacts",
+    "rollback"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "run_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"},
+    "route": {"enum": ["roadrunner-to-source-carla", "source-carla-to-package-carla", "source-carla-to-ue427"]},
+    "stage": {"type": "string", "pattern": "^(RR2SRC|SRC2PKG|SRC2UE427)\\.[A-Z0-9_]+$"},
+    "execution_context": {"enum": ["source-unreal-python", "ue427-unreal-python", "carla-client-python", "shell-build"]},
+    "plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "recorded_at": {"type": "string", "format": "date-time"},
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["platform"],
+      "properties": {
+        "platform": {"type": "string", "minLength": 1},
+        "source_carla_version": {"type": "string", "minLength": 1},
+        "source_ue_version": {"type": "string", "minLength": 1},
+        "target_ue_version": {"type": "string", "minLength": 1},
+        "target_carla_version": {"type": "string", "minLength": 1},
+        "runtime_engine_version": {"type": "string", "minLength": 1},
+        "carla_client_version": {"type": "string", "minLength": 1},
+        "carla_server_version": {"type": "string", "minLength": 1},
+        "roadrunner_version": {"type": "string", "minLength": 1},
+        "datasmith_exporter_version": {"type": "string", "minLength": 1},
+        "integration_bundle_version": {"type": "string", "minLength": 1}
+      }
+    },
+    "operation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["collector", "mode"],
+      "properties": {
+        "collector": {"type": "string", "minLength": 1},
+        "mode": {"enum": ["AUDIT", "APPLY_SAFE", "APPLY_PLAN"]},
+        "command_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "return_code": {"type": "integer"}
+      }
+    },
+    "inputs": {"type": "array", "items": {"$ref": "#/$defs/file_record"}},
+    "actions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+    "changes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["check_id", "status", "evidence_type", "summary", "observations"],
+        "properties": {
+          "check_id": {"type": "string", "minLength": 1},
+          "status": {"enum": ["PASS", "FAIL"]},
+          "evidence_type": {"enum": ["deterministic-output", "editor-audit", "runtime-measurement", "portability-replay"]},
+          "summary": {"type": "string", "minLength": 1},
+          "observations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {"$ref": "#/$defs/observation"}
+          }
+        }
+      }
+    },
+    "metrics": {"type": "array", "items": {"type": "object"}},
+    "artifacts": {"type": "array", "items": {"$ref": "#/$defs/file_record"}},
+    "rollback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "steps"],
+      "properties": {
+        "status": {"enum": ["NOT_APPLICABLE", "READY", "VERIFIED"]},
+        "steps": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "backup_manifest": {"$ref": "#/$defs/file_record"}
+      }
+    },
+    "boundary": {"$ref": "#/$defs/boundary"}
+  },
+  "$defs": {
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "adapter", "adapter_sha256", "draft_sha256", "observed_context", "observed_api_version", "finalized_at"],
+      "properties": {
+        "schema_version": {"const": "1.0.0"},
+        "adapter": {"const": "cmtk-context-receipt"},
+        "adapter_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "draft_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "observed_context": {"enum": ["source-unreal-python", "ue427-unreal-python", "carla-client-python", "shell-build"]},
+        "observed_api_version": {"type": "string", "minLength": 1},
+        "finalized_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "file_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["local_path", "public_path", "sha256", "kind"],
+      "properties": {
+        "local_path": {"type": "string", "minLength": 1},
+        "public_path": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "kind": {"type": "string", "minLength": 1}
+      }
+    },
+    "observation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "value", "source"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "value": {"type": ["string", "number", "boolean"], "minLength": 1},
+        "unit": {"type": ["string", "null"]},
+        "source": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

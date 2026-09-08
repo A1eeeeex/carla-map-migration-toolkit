@@ -2,16 +2,20 @@ from __future__ import annotations
 
 import argparse
 import sys
+from pathlib import Path
 from typing import Any
 
+from cmtk.adapters import record_stage_evidence
 from cmtk.core.archive import inspect_archive
 from cmtk.core.context import require_context
+from cmtk.core.delivery import audit_delivery, build_delivery_manifest
 from cmtk.core.errors import CmtkError
 from cmtk.core.jsonio import load_json, render_json, write_json_atomic
 from cmtk.core.paths import require_within_roots
 from cmtk.core.plans import verify_input_fingerprints, verify_plan, verify_workspace_fingerprint
 from cmtk.core.workspace import validate_workspace_shape
 from cmtk.optimization.comparison import compare_snapshots
+from cmtk.optimization.metrics import STATISTICS, compare_metrics
 from cmtk.routes.catalog import ROUTES
 from cmtk.routes.inspection import inspect_workspace
 from cmtk.routes.planning import build_plan
@@ -40,11 +44,49 @@ def _parser() -> argparse.ArgumentParser:
     archive.add_argument("--require", action="append", default=[])
     archive.add_argument("--maximum-expanded-bytes", type=int, default=20 * 1024 * 1024 * 1024)
 
+    for name in ("content-audit", "map-package-audit"):
+        delivery = sub.add_parser(name)
+        delivery.add_argument("--target", required=True)
+        delivery.add_argument("--allowed-root", action="append", required=True)
+        delivery.add_argument("--map-name", required=True)
+        delivery.add_argument("--expected-sha256")
+        delivery.add_argument("--maximum-expanded-bytes", type=int, default=20 * 1024**3)
+        delivery.add_argument("--output")
+        if name == "content-audit":
+            delivery.add_argument("--asset-root", required=True)
+        else:
+            delivery.add_argument("--require-cooked-sidecars", action="store_true")
+
+    manifest = sub.add_parser("delivery-manifest")
+    manifest.add_argument("--content", required=True)
+    manifest.add_argument("--map-package", required=True)
+    manifest.add_argument("--engine-version", required=True)
+    manifest.add_argument("--allowed-root", action="append", required=True)
+    manifest.add_argument("--output")
+
+    metrics = sub.add_parser("compare-metrics")
+    metrics.add_argument("--baseline", required=True)
+    metrics.add_argument("--candidate", required=True)
+    metrics.add_argument("--allowed-root", action="append", required=True)
+    metrics.add_argument("--stat", choices=STATISTICS, default="mean")
+    metrics.add_argument("--metric", action="append")
+    metrics.add_argument("--higher-is-better", action="append", default=[])
+    metrics.add_argument("--output")
+
     performance = sub.add_parser("compare-performance")
     performance.add_argument("--baseline", required=True)
     performance.add_argument("--candidate", required=True)
     performance.add_argument("--output")
     performance.add_argument("--allowed-root")
+
+    evidence = sub.add_parser("record-stage-evidence")
+    evidence.add_argument("--config", required=True)
+    evidence.add_argument("--plan", required=True)
+    evidence.add_argument("--plan-sha256", required=True)
+    evidence.add_argument("--receipt", required=True)
+    evidence.add_argument("--output-dir", required=True)
+    evidence.add_argument("--evidence-prefix", required=True)
+    evidence.add_argument("--sensitive-terms", required=True)
     return parser
 
 
@@ -81,6 +123,25 @@ def _artifact_output(workspace: dict[str, Any], output: str) -> str:
 
 def run(argv: list[str] | None = None) -> int:
     args = _parser().parse_args(argv)
+    if args.command == "record-stage-evidence":
+        workspace = _load_workspace(args.config)
+        plan = _load_object(args.plan, "PLAN-INVALID", "Route plan")
+        receipt = _load_object(args.receipt, "ADAPTER-RECEIPT-INVALID", "Adapter receipt")
+        if receipt.get("plan_sha256") != args.plan_sha256:
+            raise CmtkError(
+                "PLAN-HASH-MISMATCH",
+                "The adapter receipt does not declare the requested plan hash.",
+            )
+        return _emit(
+            record_stage_evidence(
+                workspace,
+                plan,
+                receipt,
+                output_dir=args.output_dir,
+                evidence_prefix=args.evidence_prefix,
+                sensitive_terms_path=args.sensitive_terms,
+            )
+        )
     require_context("host-cpython")
     if args.command == "inspect":
         workspace = _load_workspace(args.config, args.route)
@@ -134,6 +195,33 @@ def run(argv: list[str] | None = None) -> int:
             _load_object(str(candidate_path), "PERF-INPUT-INVALID", "Candidate performance snapshot"),
         )
         return _emit(result, output=output)
+    if args.command in {"content-audit", "map-package-audit", "delivery-manifest"}:
+        raw_target = args.content if args.command == "delivery-manifest" else args.target
+        if Path(raw_target).is_symlink():
+            raise CmtkError("PKG-ARCHIVE-UNSAFE-LINK", "Delivery target cannot be a link.")
+        target = require_within_roots(raw_target, args.allowed_root)
+        output = require_within_roots(args.output, args.allowed_root) if args.output else None
+        if output and (output == target or target in output.parents):
+            raise CmtkError("DELIVERY-INPUT-INVALID", "Write reports outside the inspected delivery tree.")
+        if args.command == "delivery-manifest":
+            result = build_delivery_manifest(target, map_package=args.map_package, engine_version=args.engine_version)
+        else:
+            result = audit_delivery(
+                target, kind="content" if args.command == "content-audit" else "carla",
+                map_name=args.map_name, asset_root=getattr(args, "asset_root", None),
+                require_cooked_sidecars=getattr(args, "require_cooked_sidecars", False),
+                expected_sha256=args.expected_sha256, maximum_expanded_bytes=args.maximum_expanded_bytes,
+            )
+        return _emit(result, output=str(output) if output else None)
+    if args.command == "compare-metrics":
+        baseline = require_within_roots(args.baseline, args.allowed_root)
+        candidate = require_within_roots(args.candidate, args.allowed_root)
+        output = require_within_roots(args.output, args.allowed_root) if args.output else None
+        return _emit(compare_metrics(
+            _load_object(str(baseline), "PERF-INPUT-INVALID", "Baseline"),
+            _load_object(str(candidate), "PERF-INPUT-INVALID", "Candidate"),
+            statistic=args.stat, metrics=args.metric, higher_is_better=args.higher_is_better,
+        ), output=str(output) if output else None)
     raise CmtkError("COMMAND-UNKNOWN", "Unknown command.")
 
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -38,7 +39,23 @@ def workspace_factory(tmp_path: Path):
         (data_root / "ExampleMap.xodr").write_text("<OpenDRIVE/>\n", encoding="utf-8")
         (source_root / "map-handoff.json").write_text('{"schema_version":"1.0.0"}\n', encoding="utf-8")
         (source_root / "source-asset-inventory.json").write_text('{"assets":[]}\n', encoding="utf-8")
-        (source_root / "source-dependency-manifest.json").write_text('{"dependencies":[]}\n', encoding="utf-8")
+        dependency_manifest = {
+            "dependencies": [
+                {
+                    "source_object": "/Game/Maps/Example/Road",
+                    "classification": "portable",
+                    "target_strategy": "migrate-with-unreal-assettools",
+                    "referencers": ["/Game/Maps/Example/Example"],
+                    "migration_action": "Migrate the reviewed dependency closure through Source Unreal Editor.",
+                    "verification": ["Rescan the target Asset Registry."],
+                    "rollback": ["Restore objects listed by the backup manifest."],
+                    "residual_risk": "Target Editor replay is still required.",
+                }
+            ]
+        }
+        (source_root / "source-dependency-manifest.json").write_text(
+            json.dumps(dependency_manifest), encoding="utf-8"
+        )
         (source_root / "route-input-manifest.json").write_text('{"route":"source-carla-map"}\n', encoding="utf-8")
         (project_root / "ExampleMap.uproject").write_text("{}\n", encoding="utf-8")
         (cold_root / "ExampleMapCold.uproject").write_text("{}\n", encoding="utf-8")

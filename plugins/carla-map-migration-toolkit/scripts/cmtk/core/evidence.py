@@ -41,6 +41,7 @@ def check(
 
 def stage_result(
     *,
+    run_id: str | None = None,
     route: str,
     stage: str,
     checks: list[dict[str, Any]],
@@ -52,19 +53,22 @@ def stage_result(
     artifacts: list[dict[str, Any]] | None = None,
     metrics: list[dict[str, Any]] | None = None,
     next_allowed_stages: list[str] | None = None,
+    started_at: str | None = None,
+    finished_at: str | None = None,
+    rollback: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     timestamp = utc_now()
     status = aggregate_status(item["status"] for item in checks)
     return {
         "schema_version": "1.0.0",
-        "run_id": f"inspect-{route}",
+        "run_id": run_id or f"inspect-{route}",
         "route": route,
         "stage": stage,
         "status": status,
         "execution_type": execution_type,
         "execution_context": execution_context,
-        "started_at": timestamp,
-        "finished_at": timestamp,
+        "started_at": started_at or timestamp,
+        "finished_at": finished_at or timestamp,
         "inputs": inputs or [],
         "actions": actions or [],
         "changes": changes or [],
@@ -73,6 +77,6 @@ def stage_result(
         "artifacts": artifacts or [],
         "warnings": [item["message"] for item in checks if item["status"] == "WARN"],
         "failures": [item["message"] for item in checks if item["status"] in {"FAIL", "BLOCKED"}],
-        "rollback": {},
+        "rollback": rollback or {},
         "next_allowed_stages": next_allowed_stages or [],
     }

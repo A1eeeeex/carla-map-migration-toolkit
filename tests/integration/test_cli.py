@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import subprocess
@@ -251,3 +252,126 @@ def test_archive_cli_requires_explicit_allowed_root(tmp_path: Path):
     result = _run("archive-audit", "--archive", str(archive))
     assert result.returncode == 2
     assert json.loads(result.stdout)["reason_code"] == "ARCHIVE-ALLOWED-ROOT-REQUIRED"
+
+
+def test_source_unreal_adapter_records_stage_bound_evidence(workspace_factory, tmp_path: Path):
+    workspace = workspace_factory("source-carla-to-ue427")
+    artifact_root = Path(workspace["execution"]["artifact_root"])
+    config = tmp_path / "workspace.json"
+    plan_path = artifact_root / "route-plan.json"
+    config.write_text(json.dumps(workspace), encoding="utf-8")
+    planned = _run(
+        "plan",
+        "--route",
+        "source-carla-to-ue427",
+        "--config",
+        str(config),
+        "--output",
+        str(plan_path),
+    )
+    assert planned.returncode == 0, planned.stdout
+    plan = json.loads(planned.stdout)
+
+    inventory = artifact_root / "source-asset-inventory.json"
+    inventory.write_text('{"assets":["anonymous-road"]}\n', encoding="utf-8")
+    inventory_sha256 = hashlib.sha256(inventory.read_bytes()).hexdigest()
+    receipt = {
+        "schema_version": "1.0.0",
+        "run_id": "anonymous-source-baseline",
+        "route": "source-carla-to-ue427",
+        "stage": "SRC2UE427.BASELINE",
+        "execution_context": "source-unreal-python",
+        "plan_sha256": plan["plan_sha256"],
+        "recorded_at": "2026-08-28T00:00:00Z",
+        "environment": {
+            "platform": "linux-x86_64",
+            "source_carla_version": "0.9.16",
+            "source_ue_version": "4.26.2-carla-fork",
+            "runtime_engine_version": "4.26.2-fixture",
+        },
+        "operation": {
+            "collector": "cmtk-source-unreal",
+            "mode": "AUDIT",
+        },
+        "inputs": [],
+        "actions": ["Audited the source Asset Registry."],
+        "changes": [],
+        "checks": [
+            {
+                "check_id": "source_asset_inventory_complete",
+                "status": "PASS",
+                "evidence_type": "deterministic-output",
+                "summary": "The anonymous source asset inventory is complete.",
+                "observations": [
+                    {"name": "acceptance", "value": True, "source": "source-unreal-fixture"},
+                    {"name": "asset_count", "value": 1, "source": "source-unreal-fixture"},
+                ],
+            }
+        ],
+        "metrics": [],
+        "artifacts": [
+            {
+                "local_path": str(inventory),
+                "public_path": "evidence/anonymous-source-baseline/support/source-asset-inventory.json",
+                "sha256": inventory_sha256,
+                "kind": "supporting",
+            }
+        ],
+        "rollback": {"status": "NOT_APPLICABLE", "steps": []},
+    }
+    receipt_path = artifact_root / "source-baseline-receipt.json"
+    receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+    sensitive_terms = artifact_root / "private-literals.txt"
+    sensitive_terms.write_text("private-fixture-term\n", encoding="utf-8")
+    fake_module_root = tmp_path / "fake-source-unreal"
+    fake_module_root.mkdir()
+    (fake_module_root / "unreal.py").write_text(
+        "class SystemLibrary:\n"
+        "    @staticmethod\n"
+        "    def get_engine_version():\n"
+        "        return '4.26.2-fixture'\n",
+        encoding="utf-8",
+    )
+    output_dir = artifact_root / "source-baseline-evidence"
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(CLI),
+            "record-stage-evidence",
+            "--config",
+            str(config),
+            "--plan",
+            str(plan_path),
+            "--plan-sha256",
+            plan["plan_sha256"],
+            "--receipt",
+            str(receipt_path),
+            "--output-dir",
+            str(output_dir),
+            "--evidence-prefix",
+            "evidence/anonymous-source-baseline/stages/baseline",
+            "--sensitive-terms",
+            str(sensitive_terms),
+        ],
+        check=False,
+        capture_output=True,
+        text=True,
+        env={
+            **os.environ,
+            "CMTK_EXECUTION_CONTEXT": "source-unreal-python",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "PYTHONPATH": os.pathsep.join(
+                [str(fake_module_root), os.environ.get("PYTHONPATH", "")]
+            ),
+        },
+    )
+    assert result.returncode == 0, result.stdout
+    stage = json.loads(result.stdout)
+    assert stage["stage"] == "SRC2UE427.BASELINE"
+    assert stage["execution_context"] == "source-unreal-python"
+    assert stage["status"] == "PASS"
+    assert stage["checks"][0]["evidence"] == [
+        "evidence/anonymous-source-baseline/stages/baseline/checks/source_asset_inventory_complete.json"
+    ]
+    assert (output_dir / "stage-result.json").is_file()
+    assert (output_dir / "checks" / "source_asset_inventory_complete.json").is_file()

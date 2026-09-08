@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.1.0",
+  "run_id": "anonymous-run",
+  "route": "source-carla-to-ue427",
+  "stage": "SRC2UE427.COLD_COPY",
+  "check_id": "second_clean_project_cold_copy",
+  "status": "PASS",
+  "evidence_type": "portability-replay",
+  "summary": "Anonymous clean-project replay completed under the recorded fixture contract.",
+  "observations": [
+    {
+      "name": "acceptance",
+      "value": true,
+      "unit": null,
+      "source": "anonymous-fixture"
+    }
+  ]
+}

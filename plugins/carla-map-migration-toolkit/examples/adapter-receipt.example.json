@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0.0",
+  "run_id": "anonymous-source-baseline",
+  "route": "source-carla-to-ue427",
+  "stage": "SRC2UE427.BASELINE",
+  "execution_context": "source-unreal-python",
+  "plan_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "recorded_at": "2026-08-28T00:00:00Z",
+  "environment": {
+    "platform": "linux-x86_64",
+    "source_carla_version": "0.9.16",
+    "source_ue_version": "4.26.2-carla-fork",
+    "runtime_engine_version": "4.26.2-anonymous"
+  },
+  "operation": {
+    "collector": "cmtk-source-unreal",
+    "mode": "AUDIT"
+  },
+  "inputs": [],
+  "actions": ["Audited an anonymous Source Unreal Asset Registry fixture."],
+  "changes": [],
+  "checks": [
+    {
+      "check_id": "source_asset_inventory_complete",
+      "status": "PASS",
+      "evidence_type": "deterministic-output",
+      "summary": "The anonymous source inventory is complete.",
+      "observations": [
+        {"name": "acceptance", "value": true, "source": "anonymous-source-unreal"},
+        {"name": "asset_count", "value": 1, "source": "anonymous-source-unreal"}
+      ]
+    }
+  ],
+  "metrics": [],
+  "artifacts": [],
+  "rollback": {"status": "NOT_APPLICABLE", "steps": []}
+}

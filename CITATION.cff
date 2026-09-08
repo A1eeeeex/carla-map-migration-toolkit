@@ -1,7 +1,9 @@
 cff-version: 1.2.0
-message: "Citation metadata is provisional until maintainers and a release are named."
+message: "If you use this software, please cite it using these metadata."
 title: "CARLA Map Migration Toolkit"
 type: software
 abstract: "Three guarded workflows for custom-map migration across RoadRunner, CARLA, and vanilla Unreal Engine 4.27."
 authors:
-  - name: "CARLA Map Migration Toolkit contributors"
+  - family-names: "Tong"
+    given-names: "Junzhe"
+license: Apache-2.0

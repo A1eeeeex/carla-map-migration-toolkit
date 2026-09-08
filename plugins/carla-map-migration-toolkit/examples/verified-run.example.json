@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.4.0",
+  "run_id": "src2ue427-anonymous-incomplete-001",
+  "route": "source-carla-to-ue427",
+  "profile": "standalone-map",
+  "toolkit_version": "0.1.0-alpha",
+  "git_commit": "0000000000000000000000000000000000000000",
+  "status": "INCOMPLETE",
+  "evidence_level": "L2",
+  "verification_owner": "maintainer",
+  "started_at": "2026-08-26T00:00:00Z",
+  "completed_at": "2026-08-26T00:00:01Z",
+  "environment": {
+    "host_os": "anonymous-linux",
+    "source_carla_version": null,
+    "source_ue_version": null,
+    "target_ue_version": null
+  },
+  "input_hashes": [],
+  "target_identity": {},
+  "claims_evaluated": ["C-SRC-UE427-001"],
+  "required_checks": [
+    {"id": "target_reopen", "required": true, "status": "NOT_RUN", "evidence": []},
+    {"id": "pie_smoke", "required": true, "status": "NOT_RUN", "evidence": []},
+    {"id": "second_clean_project_cold_copy", "required": true, "status": "NOT_RUN", "evidence": []}
+  ],
+  "optional_checks": [],
+  "stage_results": [],
+  "repair_summary": [],
+  "protected_property_diff": {},
+  "artifacts": [],
+  "known_limitations": ["Editor, PIE and cold-copy were not run."],
+  "redaction": {"status": "NOT_RUN", "report": null},
+  "signoff": {
+    "runner": null,
+    "reviewer": null,
+    "date": null,
+    "acceptance_contract_version": "0.1",
+    "evidence_sha256": null
+  }
+}

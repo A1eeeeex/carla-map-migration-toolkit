@@ -1,7 +1,7 @@
 {
-  "name": "carla-map-migration-toolkit-local",
+  "name": "carla-map-migration-toolkit",
   "interface": {
-    "displayName": "CARLA Map Migration Toolkit (local)"
+    "displayName": "CARLA Map Migration Toolkit"
   },
   "plugins": [
     {

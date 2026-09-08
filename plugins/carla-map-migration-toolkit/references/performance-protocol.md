@@ -16,3 +16,14 @@ collision-complexity changes are `REVIEW_REQUIRED`.
 Run `compare-performance` only on snapshots with identical `conditions`.
 Protected hash changes fail even if frame time improves. VSync or an FPS cap
 adds a warning; missing or non-improving frame-time evidence fails.
+
+Optional counter regressions and missing optional values now add `WARN`;
+invalid optional values fail. Inspect the returned `metric_comparison` instead
+of reporting only the headline frame-time improvement. Existing snapshot schema
+and required conditions/protected hashes are unchanged.
+
+For raw profiling summaries, `compare-metrics` supports scalar or nested
+mean/median/p95/p99/max values, explicit direction and per-counter regressions.
+It is diagnostic only and cannot grant optimization acceptance. For workload
+selection, staged techniques and stopping rules, read
+[map performance operations](map-performance-operations.md).

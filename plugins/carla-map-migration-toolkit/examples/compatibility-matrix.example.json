@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "generated_at": "2026-08-26T00:00:00Z",
   "entries": [
     {
@@ -12,7 +12,10 @@
       "map_mode": "standard",
       "toolkit_version": "0.1.0",
       "status": "experimental",
+      "environment_sha256": null,
       "evidence_bundle": null,
+      "verified_run_id": null,
+      "evidence_path": null,
       "verified_date": null,
       "verifier": null,
       "limitations": ["Structure and fixture logic only; Editor and cold-copy remain NOT_RUN."]

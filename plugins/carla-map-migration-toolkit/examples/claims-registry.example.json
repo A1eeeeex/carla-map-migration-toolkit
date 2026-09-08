@@ -1,0 +1,157 @@
+{
+  "schema_version": "1.2.0",
+  "generated_at": "2026-08-26T00:00:00Z",
+  "claims": [
+    {
+      "id": "C-PLUGIN-001",
+      "route": "plugin",
+      "text": "The Plugin can be discovered through its local marketplace manifest.",
+      "required_evidence_level": "L0",
+      "status": "implemented",
+      "test_ids": ["T-PLUGIN-STRUCTURE"],
+      "evidence_artifacts": ["plugin structure test report"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["Structure evidence is not route runtime evidence."]
+    },
+    {
+      "id": "C-ROUTE-001",
+      "route": "plugin",
+      "text": "The three supported request classes route to three distinct Skills.",
+      "required_evidence_level": "L2",
+      "status": "implemented",
+      "test_ids": ["T-ROUTE-STATIC-EVAL"],
+      "evidence_artifacts": ["static trigger and behavior eval datasets"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["Model-based trigger evaluation is not yet recorded."]
+    },
+    {
+      "id": "C-SAFE-001",
+      "route": "shared",
+      "text": "Host-side write planning is guarded by explicit plans, path validation, backup metadata and post-apply verification contracts.",
+      "required_evidence_level": "L2",
+      "status": "implemented",
+      "test_ids": ["T-PATH-SAFETY", "T-PLAN-STALE", "T-BACKUP-MANIFEST"],
+      "evidence_artifacts": ["unit and adversarial test report"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["Real Unreal rollback is not yet replayed."]
+    },
+    {
+      "id": "C-EVID-001",
+      "route": "shared",
+      "text": "Non-trivial workflow stages use machine-readable evidence and do not infer route success from process exit alone.",
+      "required_evidence_level": "L3",
+      "status": "experimental",
+      "test_ids": ["T-EVIDENCE-SCHEMA", "T-NOT-RUN-AGGREGATION"],
+      "evidence_artifacts": ["stage-result fixtures", "real route stage results"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["Host stages are implemented; real Editor/runtime stages remain NOT_RUN."]
+    },
+    {
+      "id": "C-SRC-UE427-001",
+      "route": "source-carla-to-ue427",
+      "text": "A supported Source CARLA map can be detached into vanilla UE4.27 and proven portable through a second clean-project cold-copy.",
+      "required_evidence_level": "L5",
+      "status": "planned",
+      "test_ids": ["T-UE427-EDITOR", "T-UE427-PIE", "T-UE427-COLD"],
+      "evidence_artifacts": ["verified-run.json", "target-validation.json", "cold-copy-validation.json"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["Standalone-map only; current Editor, PIE and cold-copy evidence is NOT_RUN."]
+    },
+    {
+      "id": "C-UE427-REF-001",
+      "route": "source-carla-to-ue427",
+      "text": "Disallowed CARLA references can be reduced to zero in both the target and cold-copy projects.",
+      "required_evidence_level": "L5",
+      "status": "planned",
+      "test_ids": ["T-UE427-REF-TARGET", "T-UE427-REF-COLD"],
+      "evidence_artifacts": ["reference-audit.json"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["No current-toolkit Editor evidence."]
+    },
+    {
+      "id": "C-UE427-MAT-001",
+      "route": "source-carla-to-ue427",
+      "text": "Required materials, parents, functions and textures can remain complete after migration and cold-copy.",
+      "required_evidence_level": "L5",
+      "status": "planned",
+      "test_ids": ["T-UE427-MATERIAL-TARGET", "T-UE427-MATERIAL-COLD"],
+      "evidence_artifacts": ["material-audit.json", "authorized screenshots"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["No current-toolkit Editor evidence."]
+    },
+    {
+      "id": "C-UE427-ENV-001",
+      "route": "source-carla-to-ue427",
+      "text": "Target World Settings, environment and lighting can reopen and run in PIE without Source CARLA runtime dependencies.",
+      "required_evidence_level": "L5",
+      "status": "planned",
+      "test_ids": ["T-UE427-REOPEN", "T-UE427-PIE", "T-UE427-ENV-COLD"],
+      "evidence_artifacts": ["target-validation.json", "cold-copy-validation.json"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["No current-toolkit Editor, PIE or cold-copy evidence."]
+    },
+    {
+      "id": "C-UE427-COL-001",
+      "route": "source-carla-to-ue427",
+      "text": "Required road collision can pass a ground-support smoke test in the target and cold-copy projects.",
+      "required_evidence_level": "L5",
+      "status": "planned",
+      "test_ids": ["T-UE427-COLLISION-TARGET", "T-UE427-COLLISION-COLD"],
+      "evidence_artifacts": ["collision-audit.json", "cold-copy-validation.json"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["No current-toolkit PIE or cold-copy evidence."]
+    },
+    {
+      "id": "C-SRC-PKG-001",
+      "route": "source-carla-to-package-carla",
+      "text": "A validated Source CARLA map can be packaged for a matching Package CARLA target and verified after import.",
+      "required_evidence_level": "L5",
+      "status": "planned",
+      "test_ids": ["T-PKG-COOK", "T-PKG-IMPORT", "T-PKG-RUNTIME"],
+      "evidence_artifacts": ["verified-run.json"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["Full route implementation is deferred until Source to UE4.27 Phase A passes."]
+    },
+    {
+      "id": "C-RR-SRC-001",
+      "route": "roadrunner-to-source-carla",
+      "text": "Supported parts of a RoadRunner custom-map import can be planned, repaired and validated in a compatible Source CARLA project.",
+      "required_evidence_level": "L4",
+      "status": "planned",
+      "test_ids": ["T-RR-IMPORT-EDITOR", "T-RR-RUNTIME"],
+      "evidence_artifacts": ["verified-run.json"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["The Primary stack is locked, but rights-safe current L4 replay and execution adapters remain NOT_RUN."]
+    },
+    {
+      "id": "C-PERF-001",
+      "route": "shared",
+      "text": "Optional optimization can be compared under controlled conditions and rejected when protected properties regress.",
+      "required_evidence_level": "L4",
+      "status": "experimental",
+      "test_ids": ["T-PERF-COMPARABLE", "T-PERF-PROTECTED-DIFF"],
+      "evidence_artifacts": ["performance comparison JSON", "real profile evidence"],
+      "verified_runs": [],
+      "supported_stacks": [],
+      "limitations": ["Historical runtime samples are not strictly comparable and current replay is NOT_RUN."]
+    }
+  ],
+  "non_claims": [
+    "One-click migration for arbitrary maps",
+    "Universal CARLA, RoadRunner, Unreal or operating-system compatibility",
+    "Migration of all CARLA runtime systems into vanilla UE4.27",
+    "CI fixture success as proof of real CARLA or Unreal migration",
+    "Permission to redistribute customer or third-party map assets"
+  ]
+}
