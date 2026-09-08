@@ -1,4 +1,4 @@
 # Notices
 
 CARLA Map Migration Toolkit
-Copyright 2026 Junzhe Tong
+Copyright 2026 Theo Tong

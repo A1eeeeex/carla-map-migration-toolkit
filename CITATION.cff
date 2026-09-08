@@ -5,5 +5,5 @@ type: software
 abstract: "Three guarded workflows for custom-map migration across RoadRunner, CARLA, and vanilla Unreal Engine 4.27."
 authors:
   - family-names: "Tong"
-    given-names: "Junzhe"
+    given-names: "Theo"
 license: Apache-2.0

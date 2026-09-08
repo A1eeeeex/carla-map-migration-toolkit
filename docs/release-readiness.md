@@ -23,7 +23,7 @@ observations to achieve that label.
 | Item | State / evidence |
 |---|---|
 | Product scope | Three route Skills; automatic versus guided capabilities documented |
-| License and author | Apache-2.0; Junzhe Tong; maintainer `@A1eeeeex` |
+| License and author | Apache-2.0; Theo Tong; maintainer `@A1eeeeex` |
 | Host baseline | 435 tests passed on the September 5 integration; unchanged core results reused |
 | Changed Skill selection | 11/11 description-routing smoke on task-local Codex CLI 0.153.4; not a general accuracy claim |
 | Real-use records | Source driving, historical Package validation, second-project/Content-only UE4.27 records; limitations retained |
